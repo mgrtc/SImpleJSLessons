@@ -4,8 +4,8 @@ function injectHelpers(array, start){
     if(typeof(start) === "undefined"){
         start = 0;
     }
-    for(i = start; i < array.length; i++){
-        if(array[i].match(/(^function)+([ ]+)/)){
+    for(i = start; i < array.length; i++){ //this is bound to cause bugs later on.
+        if(array[i].match(/(^function)+([ ]+)/)){ 
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
             var functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];

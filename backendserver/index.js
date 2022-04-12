@@ -1,5 +1,6 @@
 const express = require("express");
 const test = require("./labs/testLab1.js");
+const hash = require("./myModules/hash.js");
 const app = express();
 const bodyParser = require('body-parser')
 
@@ -17,6 +18,13 @@ app.post("/requestLab", (request, response) => {
     console.log(request.body);
     var data = test();
     response.send(data);
+});
+app.post("/postLab", (request, response) => {
+    var hashData = {
+        hash : hash(request.body),
+        data : request.body
+    };
+    console.log(hashData.data);
 });
 
 app.listen(3000,() => console.log("Server listening at port 3000"));
