@@ -2,28 +2,32 @@
 function breakIntoComponents(inputString) {
     //this needs more work
     //first, we must first remove all line breaks and whitespace. we also assume that user writes javascript with the use of semi colons...
-    inputString = inputString.replace(/\n/g, " ");
-    inputString = inputString.split(/(;)/g);
+    //inputString = inputString.replace(/\n/g, " ");
+    inputString = inputString.split(/([;||\n])/g);
+    inputString = trimStringInArray(inputString);
+    inputString = removeEmptyIndices(inputString);
+    // console.log(inputString);
     // inputString.match(/[^\;]+\;?|\;/g);
-    var outputArray = new Array();
-  
-    for (x = 0; x < inputString.length; x++) {
-      var temp = inputString[x].split(/([}{])/g);
-      for (index = 0; index < temp.length; index++) {
-        outputArray.push(temp[index]);
-      }
-    }
+    var outputArray = splitByBrackets(inputString);
     //we need to do all of this because im terrible with regex.
-    outputArray = trimStringInArray(outputArray);
-    outputArray = removeEmptyIndices(outputArray);
     outputArray = combineSemiColonsWithPreviousLines(outputArray);
-    outputArray = removeEmptyIndices(outputArray);
-    outputArray = trimStringInArray(outputArray);
     outputArray = injectHelpers(outputArray);
     return outputArray;
   }
+  function splitByBrackets(inputString){
+    var outputArray = new Array();
+    for (var x = 0; x < inputString.length; x++) {
+      var temp = inputString[x].split(/([}{])/g);
+      for (var index = 0; index < temp.length; index++) {
+        outputArray.push(temp[index]);
+      }
+    }
+    outputArray = trimStringInArray(outputArray);
+    outputArray = removeEmptyIndices(outputArray);
+    return outputArray;
+  }
   function trimStringInArray(array) {
-    for (index = 0; index < array.length; index++) {
+    for (var index = 0; index < array.length; index++) {
       array[index] = array[index].trim();
     }
     return array;
@@ -31,7 +35,7 @@ function breakIntoComponents(inputString) {
   function removeEmptyIndices(array) {
     //clean array if nothing is detected on indexes
     var newArray = new Array();
-    for (index = 0; index < array.length; index++) {
+    for (var index = 0; index < array.length; index++) {
       if (!(array[index].trim().length === 0)) {
         newArray.push(array[index]);
       }
@@ -40,14 +44,18 @@ function breakIntoComponents(inputString) {
   }
   function combineSemiColonsWithPreviousLines(array) { //cause i cant figure out how to split by semi colons on the 
     var newArray = new Array();                       //same line. whelps
-    for (index = 0; index < array.length; index++) { 
+    for (var index = 0; index < array.length; index++) { 
       if (array[index].match(";")) {
         var temp = array[index - 1] + array[index];
         newArray.push(temp);
-      } else if (!array[index + 1].match(";")) {
+      }else if(index >= array.length-1){
+        newArray.push(array[index]+";");
+      }else if (!array[index + 1].match(";")){
         newArray.push(array[index]);
       }
     }
+    newArray = trimStringInArray(newArray);
+    newArray = removeEmptyIndices(newArray);
     return newArray;
   }
   function splitIntoTokens(array) { //ONLY USE THIS AFTER INPUT STRING IS COMPLETELY BROKEN DOWN AND CLEANSED.
@@ -58,7 +66,7 @@ function breakIntoComponents(inputString) {
       var temp = array[index].split(/(^function)+([ ]+)/gm);
       temp = removeEmptyIndices(temp);
       temp[0] = temp[0] + " ";
-      console.log(temp);
+      // console.log(temp);
       for (var x = 0; x < temp.length; x++) {
         newArray.push(temp[x]);
       }

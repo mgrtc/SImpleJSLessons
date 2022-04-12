@@ -54,6 +54,8 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
         }
     }
+    newArray = trimStringInArray(newArray);
+    newArray = removeEmptyIndices(newArray);
     return newArray;
 }
 function displayTests(newTest){
@@ -67,7 +69,7 @@ function displayTests(newTest){
     }
 }
 
-  function makeConsoleTester(logs){
+  function makeConsoleTester(logs){ //please remake this
     if(logs.length === 0){
       return ``
     }
@@ -84,7 +86,7 @@ function displayTests(newTest){
     `
   }
   
-  function makeVariableTester(vars){
+  function makeVariableTester(vars){ //and this
     logDup("vars", vars);
     if(vars.length === 0){
       return ``

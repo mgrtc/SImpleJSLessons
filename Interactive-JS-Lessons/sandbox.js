@@ -1,70 +1,43 @@
 var editor;
-var testQuestions = fetch('http://127.0.0.1:3000/requestLab').then((response) => response.json()).then((data) => {
+const stuff = {value: "hello world"};
+const options = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+    // 'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  body: JSON.stringify(stuff)
+}
+var testQuestions = fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
   var newTest = new Test(data);
   console.log(newTest);
   init(newTest);
 });
+window.onload = function (){
+  var test = breakIntoComponents(localStorage.getItem("textArea"));
+  console.log(test);
+}
 function init(newTest){
     editor = CodeMirror(document.querySelector('#code-editor'), {
         lineNumbers: true,
         firstLineNumber: 0,
         tabSize: 2,
-        value: 
-`function checkIfValidTriangle(angle1, angle2, angle3){
-  var validity = 0;
-  if((angle1+angle2+angle3) === 180){
-    validity = 1; 
-    return validity;
-  }else{
-    return validity;
-  }
-}
-var a1 = 60;var a2 = 60; var a3 = 40;
-
-console.log("A triangle with angles : " + a1 + " " + a2 + " " + a3 + "...");
-
-if(checkIfValidTriangle(a1, a2, a3) === 1){
-  console.log("is a valid triangle!");
-}else{
-  console.log("is not a valid triangle!");
-}
-console.log(" ");
-var radius = 4;
-var tempF = 82;
-function returnPi(){
-  return 3.14159265;
-}
-function convertFtoC(input){
-  return (input - 32) * (5/9);
-}
-var tempC = convertFtoC(tempF);
-console.log(tempF + " in degrees celcius is " + tempC + "c");
-console.log(" ");
-
-function calculateSphereVolume(radius){
-  var pi = 3.14159265;
-  var radius = radius * radius * radius;
-  return (4/3) * returnPi() * radius;
-}
-console.log("Sphere volume with a radius of " + radius + " is : " + calculateSphereVolume(radius));
-
-console.log(" ");
-
-function CalculateAverageGrades(Sub1, Sub2, Sub3, Sub4, Sub5){
-  return (Sub1 + Sub2 + Sub3 + Sub4 + Sub5)/5;
-}
-var averageGrade = CalculateAverageGrades(95, 76, 85, 180/2, 89);
-console.log("Average Grade[95, 76, 85, 90, 89] : " + averageGrade);  
-
-
-`,
+        value: function(){
+          document.getElementById("code-editor").addEventListener("keyup", function(){
+            localStorage.setItem("textArea", editor.getValue());
+          });
+          if(localStorage.getItem("textArea")){
+            return localStorage.getItem("textArea");
+          }else{
+            localStorage.setItem("textArea", `//your code here`);
+            return localStorage.getItem("textArea");
+          }
+        }(),
         mode: {name: 'javascript'},
         theme: 'monokai'
       });
-
     displayTests(newTest);
-    var element = document.getElementById("run");
-    addRunButtonEventListener(element, newTest);
+    addRunButtonEventListener(document.getElementById("run"), newTest);
 }
 
 function addRunButtonEventListener(element, newTest){
@@ -149,11 +122,7 @@ function runCurrentTest(newTest){
     //******************
     //analyze user input
     //******************
-
-    // console.log("a:",a);
-    // console.log("b:",b);
-
-
+    
     //Very important, because eval treats the frame it was called in as its code's global frame from here we can access the user's global variables and functions
     //So any testing we'd want to do on a user's functions and variables will happen here
 
