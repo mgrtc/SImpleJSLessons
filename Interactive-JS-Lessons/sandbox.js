@@ -1,5 +1,5 @@
 var editor;
-const data = {labID: "7446330151086580"};
+const data = {labID: Number((window.location.href).split('?')[1].split('=')[1])};
 const options = {
   method: 'POST',
   headers: {
@@ -7,15 +7,19 @@ const options = {
   },
   body: JSON.stringify(data)
 }
-var testQuestions = fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
-  var newTest = new Test(data);
-  // console.log(newTest);
+fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
+console.log(data);  
+var newTest = new Test(data);
+  console.log(newTest);
   init(newTest);
 });
+
 window.onload = function (){
-  var test = breakIntoComponents(localStorage.getItem("textArea"));
-  console.log(test);
+  var results = breakIntoComponents(localStorage.getItem("textArea"));
+  console.log(results);
+  console.log(Number((window.location.href).split('?')[1].split('=')[1]));
 }
+
 function init(newTest){
     editor = CodeMirror(document.querySelector('#code-editor'), {
         lineNumbers: true,
@@ -116,7 +120,6 @@ function generateInjection(newTest){
   newArray.push(makeVariableTester(newTest.returnCurrentQuestion().vars));
   newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
   newArray.push("})()");
-
   newArray.push(`
   currentFrame = currentFrame.returnDefaultFrame();
   logDup("currentFrame", currentFrame);

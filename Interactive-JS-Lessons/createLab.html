@@ -107,7 +107,7 @@ function populateATesterTest(){
   newQuestion.addConsoleRequirements("5");
   newQuestion.addConsoleRequirements("6");
 
-  var newVariableTest = new variableTest("x", 5);
+  var newVariableTest = new variableTest("x", 52323);
   newQuestion.addVariableRequirements(newVariableTest);
   newVariableTest = new variableTest("y", 6);
   newQuestion.addVariableRequirements(newVariableTest);
@@ -116,14 +116,14 @@ function populateATesterTest(){
 
   newTest.addQuestion(newQuestion);
 
-  newQuestion = new Question("Write code that will set x = 5, y = 6, and z = 9");
-  var newVariableTest = new variableTest("x", 5);
-  newQuestion.addVariableRequirements(newVariableTest);
-  newVariableTest = new variableTest("y", 6);
-  newQuestion.addVariableRequirements(newVariableTest);
-  newVariableTest = new variableTest("z", 9);
-  newQuestion.addVariableRequirements(newVariableTest);
-  newTest.addQuestion(newQuestion);
+//   newQuestion = new Question("Write code that will set x = 5, y = 6, and z = 9");
+//   var newVariableTest = new variableTest("x", 5);
+//   newQuestion.addVariableRequirements(newVariableTest);
+//   newVariableTest = new variableTest("y", 6);
+//   newQuestion.addVariableRequirements(newVariableTest);
+//   newVariableTest = new variableTest("z", 9);
+//   newQuestion.addVariableRequirements(newVariableTest);
+//   newTest.addQuestion(newQuestion);
 
   return newTest;
 }
@@ -136,7 +136,9 @@ var newPost = {
     },
     body: JSON.stringify(newTest)
 }
-fetch('http://127.0.0.1:3000/postLab', newPost);
+fetch('http://127.0.0.1:3000/postLab', newPost).then((response) => response.json()).then((data) => {
+    console.log(data.hash);
+});
 </script>
 <body>
     

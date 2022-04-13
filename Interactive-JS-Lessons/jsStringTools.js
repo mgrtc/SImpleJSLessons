@@ -14,6 +14,8 @@ function breakIntoComponents(inputString) {
     outputArray = injectHelpers(outputArray);
     return outputArray;
   }
+
+
   function splitByBrackets(inputString){
     var outputArray = new Array();
     for (var x = 0; x < inputString.length; x++) {

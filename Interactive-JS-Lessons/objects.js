@@ -141,7 +141,7 @@ class Frame {
       newVariable.value = value;
       newFrame.variables.set(name, newVariable)
     }else{
-      newFrame.addVariable("defualt", name, value);
+      newFrame.addVariable("default", name, value);
     }
   }
   findVariable(variableName, scope){
