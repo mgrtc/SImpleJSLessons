@@ -2,7 +2,7 @@ cd into backend folder.
 run the backend: node index.js
 open frontend in an instance of live server. 
 
-bugs: you must do a refresh of createLab.html after loading the server for you to load anything from the front end
+bugs: you must do a refresh of createLab.html after loading the server for you to load anything to the front end
 
 keys for some test labs on the front end: {
     URL...html?labID=732689593208674
