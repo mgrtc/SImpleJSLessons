@@ -1,5 +1,12 @@
 var editor;
-const data = {labID: Number((window.location.href).split('?')[1].split('=')[1])};
+const data = {labID: function(){
+  try{
+      var number = Number((window.location.href).split('?')[1].split('=')[1]);
+  }catch{
+      return 305502808432711;
+  }
+  return number;
+}()};
 const options = {
   method: 'POST',
   headers: {
@@ -7,7 +14,7 @@ const options = {
   },
   body: JSON.stringify(data)
 }
-fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
+fetch('http://localhost:3000/requestLab', options).then((response) => response.json()).then((data) => {
 console.log(data);  
 var newTest = new Test(data);
   console.log(newTest);

@@ -5,6 +5,7 @@ function loadMap(newMapObject, data){
             try{
                 data = JSON.parse(data);
             }catch{
+                console.log("error loading map");
                 return;
             }
             for(var index = 0; index < data.length; index++){
@@ -13,6 +14,7 @@ function loadMap(newMapObject, data){
         });
 }
 class map{
+    counter = 0;
     newMap;
     constructor(){
         this.newMap = new Map();
@@ -27,13 +29,13 @@ class map{
             }
         });
         this.newMap.set(key, newFILENAME);
-        this.saveMap(key, newFILENAME);
-    }
-    saveMap(hash, filename){
-        var newRoute = {
-            route : hash,
-            fileName : filename
+        this.counter++;
+        if(this.counter > 2){ //untested. 
+            this.counter = 0;
+             this.saveMap();
         }
+    }
+    saveMap(){
         fs.writeFile('database/map/database.txt', JSON.stringify([...this.newMap]), function (err) {
           });
     }

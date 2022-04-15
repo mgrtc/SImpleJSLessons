@@ -1,0 +1,8 @@
+1. cd into backend folder. 
+run the backend: node index.js
+open frontend in an instance of live server. 
+
+keys for some test labs on the front end: {
+    URL...html?labID=305502808432711
+    URL...html?labID=8822047945231540
+}

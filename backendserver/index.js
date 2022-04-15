@@ -1,18 +1,29 @@
 const fs = require('fs');
+const http = require('http');
+const https = require('https');
 const express = require("express");
 const hash = require("./myModules/hash/hash.js");
 const database = require("./myModules/map/dataBaseMap.js")();
-const app = express();
 const bodyParser = require('body-parser');
+const app = express();
+
+//in order for https to work when running it on your local machine. You must create your own ssl cert. ASP.net requires https for fetch() api
+//!IMPORTANT: https://stackoverflow.com/questions/21397809/create-a-trusted-self-signed-ssl-cert-for-localhost-for-use-with-express-node
+
+var privateKey  = fs.readFileSync('./key.pem', 'utf8');
+var certificate = fs.readFileSync('./cert.pem', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
+var httpsServer = https.createServer(credentials, app);
 
 app.use(bodyParser.json());
 
 app.use(function (req ,res, next) { //in order for the backend server to receive http requests from your front end server, you must set up the headers to allow access from either
     // all domains "*", or just from your front end server, which should be "localhost" on port 3000.
     res.setHeader("Access-Control-Allow-Origin", "*");
-    //res.setHeader("Access-Control-Allow-Credentials", "true");
-    //res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+    // res.setHeader("Access-Control-Allow-Credentials", "true");
+    // res.setHeader("Access-Contr~ol-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept",  "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
     next();
 });
 app.post("/requestLab", (request, response) => {
@@ -21,6 +32,8 @@ app.post("/requestLab", (request, response) => {
     if(fileName){
         fs.readFile(fileName, function(error, data){
             if(error){
+                console.log("request read error");
+                response.end();
                 return;
             }
             console.log(JSON.parse(data));
@@ -37,10 +50,15 @@ app.post("/postLab", (request, response) => {
         data : request.body
     };
     database.setMap(hashData.hash, hashData.data);
-    var newHash = {
-        hash : "/sandbox.html?labID=" + hashData.hash
+    var newURL = {
+        URL : "/sandbox.html?labID=" + hashData.hash
     }
-    response.send(newHash);
+    console.log("somethings happening...");
+    response.send(newURL);
 });
 
-app.listen(3000,() => console.log("Server listening at port 3000"));
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(3000);
+httpsServer.listen(8443);

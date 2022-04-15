@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+.cm-s-myCodeEditorTheme.CodeMirror { background: #2e2e2e; color: #f8f8f2; font-family:'Courier New', Courier, monospace; font-size:medium;}
+.cm-s-myCodeEditorTheme .CodeMirror-gutters { background: #2e2e2e; border-right: 0px; }
+.cm-s-myCodeEditorTheme .CodeMirror-guttermarker { color: white; }
+.cm-s-myCodeEditorTheme .CodeMirror-guttermarker-subtle { color: #d0d0d0; }
+.cm-s-myCodeEditorTheme .CodeMirror-linenumber { color: #566276; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: smaller;}
+.cm-s-myCodeEditorTheme .CodeMirror-cursor { border-left: 1px solid #f8f8f0; }
+.cm-s-myCodeEditorTheme .CodeMirror-selected { background-color: rgba(255, 255, 255, 0.073);}
+
+.cm-s-myCodeEditorTheme span.cm-comment { color: #5f6c84; }
+.cm-s-myCodeEditorTheme span.cm-atom { color: #ae81ff; }
+.cm-s-myCodeEditorTheme span.cm-number { color: #ae81ff; }
+
+.cm-s-myCodeEditorTheme span.cm-comment.cm-attribute { color: #97b757; }
+.cm-s-myCodeEditorTheme span.cm-comment.cm-def { color: #bc9262; }
+.cm-s-myCodeEditorTheme span.cm-comment.cm-tag { color: #bc6283; }
+.cm-s-myCodeEditorTheme span.cm-comment.cm-type { color: #7bd7ec; }
+
+.cm-s-myCodeEditorTheme span.cm-property, .cm-s-myCodeEditorTheme span.cm-attribute { color: #d4d4d4; }
+.cm-s-myCodeEditorTheme span.cm-keyword { color: #63dbaf; }
+.cm-s-myCodeEditorTheme span.cm-builtin { color: #66d9ef; }
+.cm-s-myCodeEditorTheme span.cm-string { color: rgb(254, 205, 83); }
+
+.cm-s-myCodeEditorTheme span.cm-variable { color: #ff8153; }
+.cm-s-myCodeEditorTheme span.cm-variable-2 { color: #66d9ef; }
+.cm-s-myCodeEditorTheme span.cm-variable-3, .cm-s-myCodeEditorTheme span.cm-type { color: #66d9ef; }
+.cm-s-myCodeEditorTheme span.cm-def { color: #0bc4f7; }
+.cm-s-myCodeEditorTheme span.cm-bracket { color: #f8f8f2; }
+.cm-s-myCodeEditorTheme span.cm-tag { color: #f92672; }
+.cm-s-myCodeEditorTheme span.cm-header { color: #ae81ff; }
+.cm-s-myCodeEditorTheme span.cm-link { color: #ae81ff; }
+.cm-s-myCodeEditorTheme span.cm-error { background: #f92672; color: #f8f8f0; }
+
+.cm-s-myCodeEditorTheme .CodeMirror-activeline-background { background: #373831; }
+.cm-s-myCodeEditorTheme .CodeMirror-matchingbracket {
+  text-decoration: underline;
+  color: white !important;
+}
+
+.cm-operator {
+    color: rgb(255, 87, 32);
+}
