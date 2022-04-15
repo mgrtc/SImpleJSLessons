@@ -1,4 +1,3 @@
-var editor;
 window.onload = function(){
     var element = document.getElementsByClassName("heightAdjustment");
     var elementOffSetter = document.getElementById("navBar");

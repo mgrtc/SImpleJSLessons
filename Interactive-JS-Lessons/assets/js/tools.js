@@ -73,7 +73,7 @@ function displayTests(newTest){
       var newQuestion = newTest.returnQuestionSet()[i];
       // console.log($("#test-display"));
       lessonPage.appendChild(function(){
-        var data = {
+        let data = {
           questionTitle : newQuestion.title,
           questionText : newQuestion.text,
           example : newQuestion.example

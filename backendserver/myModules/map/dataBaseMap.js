@@ -30,10 +30,10 @@ class map{
         });
         this.newMap.set(key, newFILENAME);
         this.counter++;
-        if(this.counter > 2){ //untested. 
-            this.counter = 0;
-             this.saveMap();
-        }
+        // if(this.counter > 2){ //untested. 
+        //     this.counter = 0;
+        //      this.saveMap();
+        // }
     }
     saveMap(){
         fs.writeFile('database/map/database.txt', JSON.stringify([...this.newMap]), function (err) {
