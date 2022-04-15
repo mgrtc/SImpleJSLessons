@@ -28,24 +28,6 @@ app.use(function (req ,res, next) { //in order for the backend server to receive
     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept",  "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
     next();
 });
-app.post("/postLab", (request, response) => {
-    var body = request.body;
-    if((new TextEncoder().encode(JSON.stringify(body))).length > 5000){
-        response.send({
-            URL : "file limit exceed..."
-        });
-    }
-    var hashData = {
-        hash : hash(JSON.stringify(request.body)),
-        data : request.body
-    };
-    database.setMap(hashData.hash, hashData.data);
-    var newURL = {
-        URL : "/sandbox.html?labID=" + hashData.hash
-    }
-    console.log("somethings happening...");
-    response.send(newURL);
-});
 app.post("/requestLab", (request, response) => {
     var hash = request.body.labID;
     var fileName = database.getMap(hash);
@@ -63,6 +45,24 @@ app.post("/requestLab", (request, response) => {
         console.log("error retrieving data...")
         response.end();
     }
+});
+app.post("/postLab", (request, response) => {
+    var body = request.body;
+    if((new TextEncoder().encode(JSON.stringify(body))).length > 5000){
+        response.send({
+            URL : "file limit exceed..."
+        });
+    }
+    var hashData = {
+        hash : hash(JSON.stringify(request.body)),
+        data : request.body
+    };
+    database.setMap(hashData.hash, hashData.data);
+    var newURL = {
+        URL : "/sandbox.html?labID=" + hashData.hash
+    }
+    console.log("somethings happening...");
+    response.send(newURL);
 });
 
 var httpServer = http.createServer(app);

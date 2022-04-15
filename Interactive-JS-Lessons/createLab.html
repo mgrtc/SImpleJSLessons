@@ -136,7 +136,11 @@ function populateATesterTest() {
 
     newTest.addQuestion(newQuestion);
 
-    newQuestion = new Question("Write code that will set x = 5, y = 6, and z = 9");
+    newQuestion = new Question(`Write code that will set x = 5, y = 6, and z = 9     <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>`);
     newQuestion.setExample("var x = 10");
     newQuestion.setTitle("Setting Variables");
     var newVariableTest = new variableTest("x", 5);

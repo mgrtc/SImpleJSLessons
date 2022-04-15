@@ -55,6 +55,13 @@ function addRunButtonEventListener(element, newTest){
     runCurrentTest(newTest);
   });
 }
+var logToPage  = function(){
+  var args = [...arguments];
+  $("#console").append($(`<br>`));
+  for(arg of args){
+      $("#console").append($(`<console>${arg} </console>`));
+  }
+};
 function runCurrentTest(newTest){
     //******************
     //hijack console.log
@@ -63,13 +70,6 @@ function runCurrentTest(newTest){
       return;
     }
     window.logDup = console.log;           //hang on to an original console.log
-    var logToPage  = function(){
-        var args = [...arguments];
-        $("#console").append($(`<br>`));
-        for(arg of args){
-            $("#console").append($(`<span>${arg} </span>`));
-        }
-    };
 
     storedLogs = [];
     var storeLogs = function(){

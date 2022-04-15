@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
-.cm-s-myCodeEditorTheme.CodeMirror { background: #2e2e2e; color: #f8f8f2; font-family:'Courier New', Courier, monospace; font-size:medium;}
+.cm-s-myCodeEditorTheme.CodeMirror { background: #2e2e2e; color: #ffffcd; font-family:'Courier New', Courier, monospace; font-size:medium;}
 .cm-s-myCodeEditorTheme .CodeMirror-gutters { background: #2e2e2e; border-right: 0px; }
 .cm-s-myCodeEditorTheme .CodeMirror-guttermarker { color: white; }
 .cm-s-myCodeEditorTheme .CodeMirror-guttermarker-subtle { color: #d0d0d0; }
@@ -16,7 +16,7 @@
 .cm-s-myCodeEditorTheme span.cm-comment.cm-tag { color: #bc6283; }
 .cm-s-myCodeEditorTheme span.cm-comment.cm-type { color: #7bd7ec; }
 
-.cm-s-myCodeEditorTheme span.cm-property, .cm-s-myCodeEditorTheme span.cm-attribute { color: #d4d4d4; }
+.cm-s-myCodeEditorTheme span.cm-property, .cm-s-myCodeEditorTheme span.cm-attribute { color: #25ffcc; }
 .cm-s-myCodeEditorTheme span.cm-keyword { color: #63dbaf; }
 .cm-s-myCodeEditorTheme span.cm-builtin { color: #66d9ef; }
 .cm-s-myCodeEditorTheme span.cm-string { color: rgb(254, 205, 83); }

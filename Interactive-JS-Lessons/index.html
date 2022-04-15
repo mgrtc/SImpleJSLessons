@@ -5,9 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>backendServer</title>
-    <!-- defualt bootstrap items -->
+    <!-- default bootstrap items -->
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/helpers.js"></script>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Navbar-Centered-Brand-Dark.css">
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -19,9 +18,11 @@
     <link rel="stylesheet" href="codeMirror/lib/codemirror.css">
     <link rel="stylesheet" href="css/myCodeEditorTheme.css">
 
+    <script src="assets/js/helpers.js"></script>
     <script src="/assets/js/objects.js"></script>
     <script src="/assets/js/tools.js"></script>
     <script src="/assets/js/jsStringTools.js"></script>
+    <script src = "/assets/js/jquery.js"></script>
     <!-- <script src="/assets/js/sandbox.js"></script> -->
 </head>
 <style>
@@ -44,6 +45,9 @@ body{
     position: relative;
     padding: 10px;
     background-color: #2e2e2e;
+}
+#ConsoleContainer {
+    overflow-y: scroll;
 }
 .navbar-light{
     -webkit-box-shadow: 0px 10px 6px -1px #000000; 
@@ -83,12 +87,31 @@ console {
     position: relative;
     top: 8px;
 }
+.passed {
+    filter: opacity(.3);
+}
+.fadeOut {
+    filter: opacity(.3);
+    animation-name: fadeOut;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration:200ms;
+}
+@keyframes fadeOut {
+    
+	0% {
+		filter: opacity(1);
+	}
+	100% {
+		filter: opacity(.3);
+	}
+}
 </style>
 <script>
 class Clock{
     tick;
     constructor(){
-        this.tick = "tick";
+        this.tick = "tock";
     }
     getTick(){
         switch(this.tick){
@@ -102,13 +125,21 @@ class Section{
     questionTitle;
     text;
     example;
+    classList;
+    id;
     constructor(data){
         this.questionTitle = data.questionTitle;
         this.text = data.questionText;
         this.example = data.example;
+        this.classList = data.classList;
+        this.id = data.ID;
     }
     returnNewDomElement(){
         var newSection = document.createElement("section");
+        newSection.id = this.id;
+        for(var i = 0; i < this.classList.length; i++){
+            newSection.classList.add(this.classList[i]);
+        }
         var newQuestTitle = document.createElement("QuestionTitle");
         var newText = document.createElement("text");
         var newExampleDiv = document.createElement("div");
@@ -128,6 +159,8 @@ class Section{
 </script>
 <script>
 var editor;
+var newTest;
+var newClock = new Clock();
 const data = {labID: function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
@@ -143,8 +176,8 @@ const options = {
   },
   body: JSON.stringify(data)
 }
-fetch('http://10.0.0.130:3000/requestLab', options).then((response) => response.json()).then((data) => {
-var newTest = new Test(data);
+fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
+newTest = new Test(data);
   console.log(newTest);
   init(newTest);
 });
@@ -180,7 +213,7 @@ function init(newTest){
         extraKeys: {"Ctrl-Q": "toggleComment"},
     });
     displayTests(newTest);
-    addRunButtonEventListener(document.getElementById("run"), newTest);
+    addRunButtonEventListener(document.getElementById("runButtonContainer"), newTest);
 }
 
 function addRunButtonEventListener(element, newTest){
@@ -198,10 +231,12 @@ function runCurrentTest(newTest){
     window.logDup = console.log;           //hang on to an original console.log
     var logToPage  = function(){
         var args = [...arguments];
-        $("#console").append($(`<br>`));
+        // $("#ConsoleContainer").append($(`<br>`));
         for(arg of args){
-            $("#console").append($(`<span>${arg} </span>`));
+            $("#ConsoleContainer").append($(`<console class="${newClock.getTick()}">> ${arg} </console>`));
         }
+        var element = document.getElementById("ConsoleContainer");
+        element.scrollTop = element.scrollHeight;
     };
 
     storedLogs = [];
@@ -236,8 +271,8 @@ function runCurrentTest(newTest){
     console.log = logDup;
     window.logDup = undefined;
     if(failedTests.length === 0){
-      $(`#test-num-${newTest.currentQuestion}`).css("background-color", "green");
-      newTest.nextQuestion();
+    $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
+    newTest.nextQuestion();  
     }
     console.log("ft",failedTests);
 }
@@ -287,9 +322,9 @@ function generateInjection(newTest){
             <div id="codeEditor" style="width: 100%;"></div>
             <div id="runButtonContainer"><span id="run">Run Code</span></div>
             <div id="ConsoleContainer" style="width: 100%;height: 150px;">
-                <console class="tick">> hello world</console>
+                <!-- <console class="tick">> hello world</console>
                 <console class="tock">> 1</console>
-                <console class="tick">> 10</console>
+                <console class="tick">> 10</console> -->
             </div>
         </div>
     </div>

@@ -68,15 +68,18 @@ function displayTests(newTest){
     newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
     return newSection;
   }());
-    for( i in newTest.returnQuestionSet()){
+    for( var i in newTest.returnQuestionSet()){
       console.log(newTest.returnQuestionSet()[i]);
       var newQuestion = newTest.returnQuestionSet()[i];
       // console.log($("#test-display"));
       lessonPage.appendChild(function(){
+        let number = Number(i) + 1; //why not just i+1????
         let data = {
-          questionTitle : newQuestion.title,
+          questionTitle : `${number}) `+newQuestion.title,
           questionText : newQuestion.text,
-          example : newQuestion.example
+          example : newQuestion.example,
+          ID: `test-num-${i}`,
+          classList : []
         }
         return (new Section(data)).returnNewDomElement();
       }());
