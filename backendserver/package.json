@@ -9,6 +9,9 @@
   "author": "david nguyen, matthew gray",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "0g": "^0.0.6",
+    "express": "^4.17.3",
+    "mongoose": "^6.3.0",
+    "nodemon": "^2.0.15"
   }
 }
