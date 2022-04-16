@@ -7,7 +7,7 @@ helpful packages:
 npm install nodemon -g
 
 2. cd into backend folder. 
-run the backend: node index.js
+run the backend: node index.js ||
                  nodemon index.js
 open frontend in an instance of live server.
 
