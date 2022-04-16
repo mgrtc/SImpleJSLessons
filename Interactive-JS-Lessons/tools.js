@@ -50,6 +50,12 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newStack.pop();
         }
+        else if(array[i].match(/(^console.log)/)){ 
+          var logString = array[i].match(/(?<=\()(.+)(?=\))/)[0];
+          newArray.push(`logToPage(${logString})`);
+          newArray.push(`storeLogs(${logString})`);
+          newArray.push(array[i]);
+        }  
         else{
             newArray.push(array[i]);
         }
@@ -76,7 +82,7 @@ function displayTests(newTest){
     return `
     var logs = ${JSON.stringify(logs)};
     for(log of logs){
-    //   logDup("W-logs:", logs, "S-logs:", storedLogs,  "log:", log, "found:", storedLogs.indexOf(log.toString()) === -1 );
+    //   console.log("W-logs:", logs, "S-logs:", storedLogs,  "log:", log, "found:", storedLogs.indexOf(log.toString()) === -1 );
       if(storedLogs.indexOf(log) === -1 ){
         failedTests.push(log);
       }else{
@@ -87,13 +93,14 @@ function displayTests(newTest){
   }
   
   function makeVariableTester(vars){ //and this
-    logDup("vars", vars);
+    console.log("vars", vars);
     if(vars.length === 0){
       return ``
     }
     return `
     var vars = ${JSON.stringify(vars)};
     for(variable of vars){
+      console.log("path:",variable.path,currentFrame);
       try{
         if(JSON.stringify(eval(variable.name)) !== JSON.stringify(variable.val)){
           failedTests.push(variable);
