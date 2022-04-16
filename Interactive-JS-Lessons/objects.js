@@ -135,7 +135,7 @@ class Frame {
   }
   updateVariable(name, value){
     var newFrame = returnFrameContainingVariable(this, name);
-    //logdup(newFrame.name + " contains " + name);
+    //logDup(newFrame.name + " contains " + name);
     if(newFrame.variables.has(name)){
       var newVariable = newFrame.variables.get(name);
       newVariable.value = value;
