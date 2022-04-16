@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://blasphelmy.github.io/css/defaults.css" />
+    <link rel="stylesheet" href="https://blasphelmy.github.io/css/menuButton.css" />
+    <link rel="stylesheet" href="css/defaults.css" />
     <title>Lab Creator</title>
 </head>
 <script>
 class Test {
+    title;
     testQuestionSet;
     currentQuestion;
-    constructor() {
+    constructor(title) {
         this.testQuestionSet = new Array();
         this.currentQuestion = 0;
+        this.title = title;
     }
     //add question setters and getters
     addQuestion(newQuestion) {
@@ -32,7 +37,9 @@ class Test {
     }
 }
 class Question {
+    title;
     text; //Question - a string
+    example;
     logs;//array of console.logs to be detected 
     vars; //variables to be detected
     functs; //functions to be made, along with tests.
@@ -42,6 +49,8 @@ class Question {
         this.logs = [];
         this.vars = [];
         this.functs = [];
+        this.title = "";
+        this.example = "";
     }
     returnText() {
         return this.text;
@@ -63,6 +72,12 @@ class Question {
     }
     addFunctionRequirements(newFunctionTest) { //string, array[{input = "", output = ""}, ..]
         this.functs.push({ name: newFunctionTest.name, tests: newFunctionTest.tests });
+    }
+    setExample(newExample){
+        this.example = newExample;
+    }
+    setTitle(text){
+        this.title = text;
     }
 
 }
@@ -89,43 +104,77 @@ class functionTest {
 
 </script>
 <script>
-function populateATesterTest(){
-  var newTest = new Test();
 
-  var newQuestion = new Question("Correct function <b>convertFtoC</b> so that it correctly takes in a degrees in fahrenheit, returns in degrees celcius, then write a function <b>convertCtoF</b> to reverse the conversion");
-  var newFunctionTest = new functionTest("convertFtoC");
+function populateATesterTest() {
+    var newTest = new Test("Welcome to Programming");
+
+    var newQuestion = new Question("Correct function <b>convertFtoC</b> so that it correctly takes in a degrees in fahrenheit, returns in degrees celcius, then write a function <b>convertCtoF</b> to reverse the conversion");
+    newQuestion.setExample("convertCtoF(input){ }");
+    newQuestion.setTitle("Create a function to convert between F and C");
+    var newFunctionTest = new functionTest("convertFtoC");
     newFunctionTest.addTest("32", "0");
     newFunctionTest.addTest("82", "27.77777777777778");
-  newQuestion.addFunctionRequirements(newFunctionTest);
-  var newFunctionTest = new functionTest("convertCtoF");
+    newQuestion.addFunctionRequirements(newFunctionTest);
+    var newFunctionTest = new functionTest("convertCtoF");
     newFunctionTest.addTest("0", "32");
     newFunctionTest.addTest("27.77777777777778", "82");
-  newQuestion.addFunctionRequirements(newFunctionTest);
-  newTest.addQuestion(newQuestion);
+    newQuestion.addFunctionRequirements(newFunctionTest);
+    newTest.addQuestion(newQuestion);
 
-  newQuestion = new Question("Write code that will console.log out 5 and 6 && Write code that will set x = 5, y = 6, and z = 9");
-  newQuestion.addConsoleRequirements("5");
-  newQuestion.addConsoleRequirements("6");
+    newQuestion = new Question("Write code that will console.log out 5 and 6 && Write code that will set x = 5, y = 6, and z = 9");
+    newQuestion.setExample(`console.log("hello world")\nvar x = 10;`);
+    newQuestion.setTitle("The Console");
+    newQuestion.addConsoleRequirements("5");
+    newQuestion.addConsoleRequirements("6");
 
-  var newVariableTest = new variableTest("x", 52323);
-  newQuestion.addVariableRequirements(newVariableTest);
-  newVariableTest = new variableTest("y", 6);
-  newQuestion.addVariableRequirements(newVariableTest);
-  newVariableTest = new variableTest("z", 9);
-  newQuestion.addVariableRequirements(newVariableTest);
+    var newVariableTest = new variableTest("x", 5);
+    newQuestion.addVariableRequirements(newVariableTest);
+    newVariableTest = new variableTest("y", 6);
+    newQuestion.addVariableRequirements(newVariableTest);
+    newVariableTest = new variableTest("z", 9);
+    newQuestion.addVariableRequirements(newVariableTest);
 
-  newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
 
-//   newQuestion = new Question("Write code that will set x = 5, y = 6, and z = 9");
-//   var newVariableTest = new variableTest("x", 5);
-//   newQuestion.addVariableRequirements(newVariableTest);
-//   newVariableTest = new variableTest("y", 6);
-//   newQuestion.addVariableRequirements(newVariableTest);
-//   newVariableTest = new variableTest("z", 9);
-//   newQuestion.addVariableRequirements(newVariableTest);
-//   newTest.addQuestion(newQuestion);
+    newQuestion = new Question(`Write code that will set x = 5, y = 6, and z = 9     <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>`);
+    newQuestion.setExample("var x = 10");
+    newQuestion.setTitle("Setting Variables");
+    var newVariableTest = new variableTest("x", 5);
+    newQuestion.addVariableRequirements(newVariableTest);
+    newVariableTest = new variableTest("y", 6);
+    newQuestion.addVariableRequirements(newVariableTest);
+    newVariableTest = new variableTest("z", 9);
+    newQuestion.addVariableRequirements(newVariableTest);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
+    newTest.addQuestion(newQuestion);
 
-  return newTest;
+    return newTest;
 }
 
 var newTest = populateATesterTest();
@@ -137,10 +186,103 @@ var newPost = {
     body: JSON.stringify(newTest)
 }
 fetch('http://127.0.0.1:3000/postLab', newPost).then((response) => response.json()).then((data) => {
-    console.log(data.hash);
+    console.log(data.URL);
 });
 </script>
+<style>
+#mainBodyContainer {
+    position: relative;
+    margin: auto;
+    width: 100%;
+    background-color: teal;
+    display: inline-flex;
+    flex-direction: row;
+}
+.contentPane {
+    position: relative;
+    width: 100%;
+    background : magenta;
+}
+editor {
+    background-color: blue;
+}
+
+summary {
+    background-color: pink;
+}
+preview {
+    background-color: yellow;
+}
+
+</style>
+<script>
+var editorElement;
+var summaryElement;
+var previewElement;
+window.onload = function(){
+    var a = 7;
+    var b = 10;
+
+    // var x = whatisthis(2, (a, b));
+    // console.log(x);
+    editorElement = document.getElementsByTagName("editor")[0];
+    summaryElement = document.getElementsByTagName("summary")[0];
+    previewElement = document.getElementsByTagName("preview")[0];
+    console.log(JSON.stringify(editorElement));
+    console.log(editorElement);
+    console.log(summaryElement);
+    console.log(previewElement);
+}
+</script>
+<script>
+class domElement{
+    parentElement;
+    childrenElemets;
+    tagName;
+    id;
+    classList;
+    innerText;
+    constructor(elmData){
+        this.tagName = elmData.tagName;
+        this.id = elmData.id;
+        this.classList = elmData.classList;
+    }
+    buildTree(){
+        var newElement = document.createElement("div");
+        return newElement;
+    }
+}
+function whatisthis(x, z){
+    return x+y;
+}
+</script>
 <body>
-    
+<div id = "navbar">
+    <div id="menuScreen" class="hide">
+        <a href="calculatorClone.html">Macintosh Calculator Clone</a>
+        <a href="2048.html">A Simple Game of 2048</a>
+        <a href="https://blasphelmy.github.io/aBasicJavascriptVisualizer/">Javascript Scoper</a>
+        <hr>
+        <a href="about.html">About Me</a>
+        <a href="about.html#projects">Projects</a>
+        <a href="about.html#contactsBlock">Contact Me</a>
+        <a href="resume.html">Resume</a>
+        <hr>
+    </div>
+    <a href="index.html"><h1 style="display: inline-block">JS Worksheet Generator</h1></a> <div id = "menuButtonContainer" onclick="menuBarClick()"><div id="menuButton"><p>|</p><p>|</p><p>|</p></div></div>
+    </div>
+<div id = "mainBodyContainer">
+    <editor>
+    <div class="contentPane">
+        <p>Please Choose An Option to Begin</p>
+    </div>
+    </editor>
+    <summary>
+        <p>hello</p>
+    </summary>
+    <preview>
+        <p>hello</p>
+    </preview>
+</div>
 </body>
 </html>

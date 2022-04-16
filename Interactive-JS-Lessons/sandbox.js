@@ -1,5 +1,12 @@
 var editor;
-const data = {labID: Number((window.location.href).split('?')[1].split('=')[1])};
+const data = {labID: function(){
+  try{
+      var number = Number((window.location.href).split('?')[1].split('=')[1]);
+  }catch{
+      return 305502808432711;
+  }
+  return number;
+}()};
 const options = {
   method: 'POST',
   headers: {
@@ -7,7 +14,7 @@ const options = {
   },
   body: JSON.stringify(data)
 }
-fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
+fetch('http://localhost:3000/requestLab', options).then((response) => response.json()).then((data) => {
 console.log(data);  
 var newTest = new Test(data);
   console.log(newTest);
@@ -48,6 +55,13 @@ function addRunButtonEventListener(element, newTest){
     runCurrentTest(newTest);
   });
 }
+var logToPage  = function(){
+  var args = [...arguments];
+  $("#console").append($(`<br>`));
+  for(arg of args){
+      $("#console").append($(`<console>${arg} </console>`));
+  }
+};
 function runCurrentTest(newTest){
     //******************
     //hijack console.log
@@ -55,7 +69,7 @@ function runCurrentTest(newTest){
     if((typeof(newTest.returnCurrentQuestion()) === "undefined")){
       return;
     }
-    // window.logDup = console.log;           //hang on to an original console.log
+  
     window.logToPage = function(){
         var args = [...arguments];
         $("#console").append($(`<br>`));
