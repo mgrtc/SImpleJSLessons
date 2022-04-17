@@ -1,4 +1,5 @@
 function injectHelpers(array, start){
+  // console.log("array before injection : ", array);
     var newArray = new Array();
     var newStack = new Stack();
     if(typeof(start) === "undefined"){
@@ -22,14 +23,28 @@ function injectHelpers(array, start){
           newArray.push(array[i]);
         }  
         else if(array[i].match(/(^var)+([ ]+)/)){
+          var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+          if(array[i].split(/=/)[1].trim().match(/(^function)+([ ]*)+([(])/)){ //tests if anon function is declared
             newArray.push(array[i]);
-            var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
+            newStack.push(variableName);
+            newStack.push("var");
+            newStack.push("anonFunction");
+            // console.log(newStack);
+            continue;
+          }
+          newArray.push(array[i]);
+          newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
-            newArray.push(array[i]);
-
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+            if(array[i].split(/=/)[1].trim().match(/(^function)+([ ]*)+([(])/)){
+              newArray.push(array[i]);
+              newStack.push(variableName);
+              newStack.push("let");
+              newStack.push("anonFunction");
+              continue;
+            }
+            newArray.push(array[i]);
             newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
         }
         else if(detectStatementVariableReassignment(array[i])){
@@ -40,10 +55,19 @@ function injectHelpers(array, start){
         else if(array[i].match(/(^return)/)){
             newArray.push("currentFrame = currentFrame.returnParentFrame();")
             newArray.push(array[i]);
-            i++;
-            newArray.push(array[i]);
+            // i++;
+            // newArray.push(array[i]);
         }
-        else if(array[i].match(/([}])/)){
+        else if(array[i].match(/}/g)){
+          if(newStack.peek() === "anonFunction"){
+            // console.log("hello");
+            newStack.pop();
+            newArray.push(array[i]);
+            let type = newStack.pop();
+            let name = newStack.pop();
+            newArray.push(`currentFrame.addVariable("${type}", "${name}", ${name});`);
+            continue;
+          }
           if(newStack.peek() === "function"){
             newArray.push("currentFrame = currentFrame.returnParentFrame();")
           }
@@ -53,6 +77,7 @@ function injectHelpers(array, start){
         else{
             newArray.push(array[i]);
         }
+        // console.log(newStack);
     }
     newArray = trimStringInArray(newArray);
     newArray = removeEmptyIndices(newArray);
@@ -69,7 +94,7 @@ function displayTests(newTest){
     return newSection;
   }());
     for( var i in newTest.returnQuestionSet()){
-      console.log(newTest.returnQuestionSet()[i]);
+      // console.log(newTest.returnQuestionSet()[i]);
       var newQuestion = newTest.returnQuestionSet()[i];
       // console.log($("#test-display"));
       lessonPage.appendChild(function(){

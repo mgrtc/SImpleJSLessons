@@ -23,7 +23,7 @@
     <script src="/assets/js/tools.js"></script>
     <script src="/assets/js/jsStringTools.js"></script>
     <script src = "/assets/js/jquery.js"></script>
-    <!-- <script src="/assets/js/sandbox.js"></script> -->
+    <script src="/assets/js/sandbox.js"></script>
 </head>
 <style>
 body{
@@ -56,6 +56,15 @@ body{
 #navbar{
     -webkit-box-shadow: 0px 0px 6px -1px #000000; 
     box-shadow: 0px 0px 6px -1px #000000;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 section {
     padding: 30px;
@@ -108,203 +117,17 @@ console {
 }
 </style>
 <script>
-class Clock{
-    tick;
-    constructor(){
-        this.tick = "tock";
-    }
-    getTick(){
-        switch(this.tick){
-            case "tick" : this.tick = "tock"; break;
-            case "tock" : this.tick = "tick"; break;
-        }
-        return this.tick;
-    }
-}
-class Section{
-    questionTitle;
-    text;
-    example;
-    classList;
-    id;
-    constructor(data){
-        this.questionTitle = data.questionTitle;
-        this.text = data.questionText;
-        this.example = data.example;
-        this.classList = data.classList;
-        this.id = data.ID;
-    }
-    returnNewDomElement(){
-        var newSection = document.createElement("section");
-        newSection.id = this.id;
-        for(var i = 0; i < this.classList.length; i++){
-            newSection.classList.add(this.classList[i]);
-        }
-        var newQuestTitle = document.createElement("QuestionTitle");
-        var newText = document.createElement("text");
-        var newExampleDiv = document.createElement("div");
-        newExampleDiv.classList.add("example");
-
-        newQuestTitle.innerHTML = "<h2>"+this.questionTitle+"</h2>";
-        newText.innerHTML = "<p>"+this.text+"</p>";
-        newExampleDiv.innerHTML = "<p>"+this.example+"</p>";
-
-        newSection.appendChild(newQuestTitle);
-        newSection.appendChild(newText);
-        newSection.appendChild(newExampleDiv);
-
-        return newSection;
-    }
-}
-</script>
-<script>
-var editor;
-var newTest;
-var newClock = new Clock();
-const data = {labID: function(){
-  try{
-      var number = Number((window.location.href).split('?')[1].split('=')[1]);
-  }catch{
-      return 5830658810471045;
-  }
-  return number;
-}()};
-const options = {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-}
-fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
-    if(data.error){
-        console.log(data.error);
-    }else{
-        newTest = new Test(data);
-        console.log(newTest);
-        init(newTest);
-    }
-});
-
 // window.onload = function (){//THIS IS FOR TESTING PURPOSES. 
-// //   var results = breakIntoComponents(localStorage.getItem("textArea"));
-// //   console.log(results);
+//   var results = breakIntoComponents(localStorage.getItem("textArea"));
+//   console.log(results.join("\n"));
 // //   console.log(Number((window.location.href).split('?')[1].split('=')[1]));
+
+// var x = function(e){
+//   return e;
+// };
+// console.log(x(34));
+// console.log("match };", "match };".match(/([}])/));
 // }
-
-function init(newTest){
-    editor = CodeMirror(document.querySelector('#codeEditor'), {
-    lineNumbers: true,
-    firstLineNumber: 0,
-    tabSize: 2,
-    value: function(){
-        document.getElementById("codeEditor").addEventListener("keyup", function(){
-            localStorage.setItem("textArea", editor.getValue());
-        });
-            if(localStorage.getItem("textArea")){
-            return localStorage.getItem("textArea");
-        }else{
-            localStorage.setItem("textArea", `//your code here`);
-            return localStorage.getItem("textArea");
-        }
-    }(),
-        theme: "myCodeEditorTheme",
-        continueComments: "Enter",
-        mode: 'javascript',
-        lineWrapping: true,
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        extraKeys: {"Ctrl-Q": "toggleComment"},
-    });
-    displayTests(newTest);
-    addRunButtonEventListener(document.getElementById("runButtonContainer"), newTest);
-}
-
-function addRunButtonEventListener(element, newTest){
-  element.addEventListener("click", function(){
-    runCurrentTest(newTest);
-  });
-}
-function runCurrentTest(newTest){
-    //******************
-    //hijack console.log
-    //******************
-    if((typeof(newTest.returnCurrentQuestion()) === "undefined")){
-      return;
-    }
-    window.logDup = console.log;           //hang on to an original console.log
-    var logToPage  = function(){
-        var args = [...arguments];
-        // $("#ConsoleContainer").append($(`<br>`));
-        for(arg of args){
-            $("#ConsoleContainer").append($(`<console class="${newClock.getTick()}">> ${arg} </console>`));
-        }
-        var element = document.getElementById("ConsoleContainer");
-        element.scrollTop = element.scrollHeight;
-    };
-
-    storedLogs = [];
-    var storeLogs = function(){
-      logDup(storedLogs)
-      storedLogs.push([...arguments].join(' '));
-    }
-
-    console.log = function(){
-        //hijack it here
-        logDup(...arguments);
-        storeLogs(...arguments);
-        logToPage(...arguments);
-    }
-    //**************
-    //run user input
-    //**************
-    failedTests = []; //very interesting
-    var injection = generateInjection(newTest);
-    Function(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
-
-    //******************
-    //analyze user input
-    //******************
-
-    //Very important, because eval treats the frame it was called in as its code's global frame from here we can access the user's global variables and functions
-    //So any testing we'd want to do on a user's functions and variables will happen here
-
-    //********************************
-    // Clean up changes to console.log
-    //********************************
-    console.log = logDup;
-    window.logDup = undefined;
-    if(failedTests.length === 0){
-    $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
-    newTest.nextQuestion();  
-    }
-    console.log("ft",failedTests);
-}
-
-function generateInjection(newTest){
-  var newArray = new Array();
-  //here, you inject any lines of code you want
-  newArray.push(`
-  var functionDeclared = new Map();
-  var currentFrame = new Frame();
-  `);
-
-  //begin parsing of code in code editor;
-  var newInjectedCode = breakIntoComponents(editor.getValue()).join("\n");
-  newArray.push(newInjectedCode);
-
-  //push other tests here.
-  newArray.push("(()=>{");
-  newArray.push(makeConsoleTester(newTest.returnCurrentQuestion().logs));
-  newArray.push(makeVariableTester(newTest.returnCurrentQuestion().vars));
-  newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
-  newArray.push("})()");
-  newArray.push(`
-  currentFrame = currentFrame.returnDefaultFrame();
-  logDup("currentFrame", currentFrame);
-  `);
-  return newArray;
-}
 </script>
 <body class="flex-column">
     <nav id ="navBar" class="navbar navbar-dark navbar-expand-md" style="background: rgb(61, 61, 61);color: rgb(224,224,224);padding: 15px;">
@@ -315,8 +138,8 @@ function generateInjection(newTest){
                     <li class="nav-item"></li>
                     <li class="nav-item"></li>
                 </ul>
-            </div><input class="form-control-sm" type="search" style="margin-left: 0px;" placeholder="Search ie : 305502808432711">
-            <button class="btn btn-primary btn-sm" type="button" style="margin-left: 20px;">Search</button>
+            </div><input class="form-control-sm" type="search" style="margin-left: 0px; border-radius: 10px; border-style: none;" placeholder="Search ie : 305502808432711">
+            <button class="btn btn-primary btn-sm" type="button" style="margin-left: 10px;border-radius: 10px;height: 31px;">Search</button>
             <button data-bs-target="#navcol-1" data-bs-toggle="collapse" class="navbar-toggler"><span class="visually-hidden">Toggle navigation</span><span class="navbar-dark navbar-toggler-icon"></span></button>
         </div>
     </nav>
@@ -324,7 +147,7 @@ function generateInjection(newTest){
         <div id="lessonPage" class="heightAdjustment" style="background: rgb(234, 234, 234);height: 200px;width: 49.999%;overflow: scroll;"></div>
         <div class="heightAdjustment" style="background: rgb(61, 61, 61);height: 200px;width: 49.999%;color: var(--bs-red);">
             <div id="codeEditor" style="width: 100%;"></div>
-            <div id="runButtonContainer"><span id="run">Run Code</span></div>
+            <div id="runButtonContainer" class="noselect"><span id="run">Run Code</span></div>
             <div id="ConsoleContainer" style="width: 100%;height: 150px;">
                 <!-- <console class="tick">> hello world</console>
                 <console class="tock">> 1</console>

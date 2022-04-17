@@ -193,3 +193,52 @@ class Stack {
     return this.top;
   }
 }
+//others
+class Clock{
+  tick;
+  constructor(){
+      this.tick = "tock";
+  }
+  getTick(){
+      switch(this.tick){
+          case "tick" : this.tick = "tock"; break;
+          case "tock" : this.tick = "tick"; break;
+      }
+      return this.tick;
+  }
+}
+class Section{
+  questionTitle;
+  text;
+  example;
+  classList;
+  id;
+  constructor(data){
+      this.questionTitle = data.questionTitle;
+      this.text = data.questionText;
+      this.example = data.example;
+      this.classList = data.classList;
+      this.id = data.ID;
+  }
+  returnNewDomElement(){
+      var newSection = document.createElement("section");
+      newSection.id = this.id;
+      for(var i = 0; i < this.classList.length; i++){
+          newSection.classList.add(this.classList[i]);
+      }
+      var newQuestTitle = document.createElement("QuestionTitle");
+      var newText = document.createElement("text");
+      var newExampleDiv = document.createElement("div");
+      newExampleDiv.classList.add("example");
+
+      newQuestTitle.innerHTML = "<h2>"+this.questionTitle+"</h2>";
+      newText.innerHTML = "<p>"+this.text+"</p>";
+      newExampleDiv.innerHTML = "<p>"+this.example+"</p>";
+
+      newSection.appendChild(newQuestTitle);
+      newSection.appendChild(newText);
+      newSection.appendChild(newExampleDiv);
+
+      return newSection;
+  }
+}
