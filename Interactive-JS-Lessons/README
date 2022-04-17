@@ -1,12 +1,19 @@
 1. dependencies:
 mongoDB
+https://www.mongodb.com/docs/manual/administration/install-community/
 node.js/NPM package manager
 
-cd into backend folder. 
-run the backend: node index.js
+helpful packages:
+npm install nodemon -g
+
+2. cd into backend folder. 
+run the backend: node index.js ||
+                 nodemon index.js
 open frontend in an instance of live server.
 
-keys for some test labs on the front end: {
-    URL...html?labID=732689593208674
-    ?labID=664981842751798
-}
+3. with mongodb, you will need to populate the 
+database with a test lesson to see anything on
+the front end. to do this, simply run createLab.html once. 
+in the console, key for the lesson will be returned 
+from the server.
+
