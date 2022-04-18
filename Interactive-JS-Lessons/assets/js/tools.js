@@ -93,14 +93,14 @@ function displayTests(newTest){
     newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
     return newSection;
   }());
-    for( var i in newTest.returnQuestionSet()){
+    for( let i in newTest.returnQuestionSet()){
       // console.log(newTest.returnQuestionSet()[i]);
-      var newQuestion = newTest.returnQuestionSet()[i];
+      let newQuestion = newTest.returnQuestionSet()[i];
       // console.log($("#test-display"));
       lessonPage.appendChild(function(){
         let number = Number(i) + 1; //why not just i+1????
         let data = {
-          questionTitle : `${number}) `+newQuestion.title,
+          questionTitle : `${number}) ` + newQuestion.title,
           questionText : newQuestion.text,
           example : newQuestion.example,
           ID: `test-num-${i}`,

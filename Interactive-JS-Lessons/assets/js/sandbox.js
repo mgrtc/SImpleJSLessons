@@ -5,7 +5,7 @@ const data = {labID: function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch{
-      return 5830658810471045;
+      return 664981842751798;
   }
   return number;
 }()};
@@ -16,7 +16,7 @@ const options = {
   },
   body: JSON.stringify(data)
 }
-fetch('http://127.0.0.1:3000/requestLab', options).then((response) => response.json()).then((data) => {
+fetch('https://137.184.237.82:8443/requestLab', options).then((response) => response.json()).then((data) => {
     if(data.error){
         console.log(data.error);
     }else{

@@ -68,7 +68,7 @@ app.post("/postLab", (request, response) => {
         }
     });
     var newURL = {
-        URL : "/sandbox.html?labID=" + newData.lessonHash
+        URL : "/?labID=" + newData.lessonHash
     }
     console.log("somethings happening...");
     response.send(newURL);

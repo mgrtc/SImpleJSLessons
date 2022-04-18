@@ -1,19 +1,12 @@
-1. dependencies:
+dependencies:
+if you want to run your own instance of backend server:
 mongoDB
 https://www.mongodb.com/docs/manual/administration/install-community/
+
+to run the front end: 
 node.js/NPM package manager
 
 helpful packages:
 npm install nodemon -g
 
-2. cd into backend folder. 
-run the backend: node index.js ||
-                 nodemon index.js
-open frontend in an instance of live server.
-
-3. with mongodb, you will need to populate the 
-database with a test lesson to see anything on
-the front end. to do this, simply run createLab.html once. 
-in the console, key for the lesson will be returned 
-from the server.
-
+open frontend folder in instance of liveserver 
