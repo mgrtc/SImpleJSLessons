@@ -3,12 +3,13 @@ const http = require('http');
 const https = require('https');
 const express = require("express");
 const mongoose = require("mongoose");
-const lessonModel = require("./model");
+const lessonModel = require("./js/model");
 const hash = require("./myModules/hash/hash.js");
-const database = require("./myModules/map/dataBaseMap.js")();
+// const database = require("./myModules/map/dataBaseMap.js")();
 const bodyParser = require('body-parser');
 const { json } = require('express/lib/response');
 const app = express();
+const rateLimit = require('express-rate-limit')
 
 //in order for https to work when running it on your local machine. You must create your own ssl cert. ASP.net requires https for fetch() api
 //!IMPORTANT: https://stackoverflow.com/questions/21397809/create-a-trusted-self-signed-ssl-cert-for-localhost-for-use-with-express-node
@@ -18,6 +19,24 @@ var certificate = fs.readFileSync('./cert.pem', 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 
 var httpsServer = https.createServer(credentials, app);
+
+const limiter = rateLimit({
+	windowMs: 10 * 60 * 1000, // 10 minute time window
+	max: 15, // Limit each IP to x requests per time `window`
+})
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
+
+app.use(function (req ,res, next) { //in order for the backend server to receive http requests from your front end server, you must set up the headers to allow access from either
+    // all domains "*", or just from your front end server, which should be "localhost" on port 3000.
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    // res.setHeader("Access-Control-Allow-Credentials", "true");
+    // res.setHeader("Access-Contr~ol-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept",  "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+    next();
+});
+
 
 mongoose.connect('mongodb://localhost:27017/usersdb',
   {
@@ -29,15 +48,6 @@ mongoose.connect('mongodb://localhost:27017/usersdb',
 app.use(bodyParser.json({
     limit : '1mb'
 }));
-
-app.use(function (req ,res, next) { //in order for the backend server to receive http requests from your front end server, you must set up the headers to allow access from either
-    // all domains "*", or just from your front end server, which should be "localhost" on port 3000.
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    // res.setHeader("Access-Control-Allow-Credentials", "true");
-    // res.setHeader("Access-Contr~ol-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept",  "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-    next();
-});
 app.post("/requestLab", (request, response) => {
     var hash = request.body.labID;
     lessonModel.findOne({lessonHash:hash}, function(error, data){

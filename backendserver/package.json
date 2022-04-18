@@ -11,6 +11,7 @@
   "dependencies": {
     "0g": "^0.0.6",
     "express": "^4.17.3",
+    "express-rate-limit": "^6.3.0",
     "mongoose": "^6.3.0",
     "nodemon": "^2.0.15"
   }

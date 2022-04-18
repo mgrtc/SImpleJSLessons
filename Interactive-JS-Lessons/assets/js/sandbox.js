@@ -22,7 +22,7 @@ fetch('http://137.184.237.82:3000/requestLab', options).then((response) => respo
         console.log(data.error);
     }else{
         newTest = new Test(data);
-        console.log(newTest);
+        // console.log(newTest);
         init(newTest);
     }
 });

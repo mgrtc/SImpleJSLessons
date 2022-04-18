@@ -1,14 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="text-success" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://blasphelmy.github.io/css/defaults.css" />
-    <link rel="stylesheet" href="https://blasphelmy.github.io/css/menuButton.css" />
-    <link rel="stylesheet" href="css/defaults.css" />
-    <title>Lab Creator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>backendServer</title>
+    <!-- default bootstrap items -->
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Navbar-Centered-Brand-Dark.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <!-- code mirror stuff -->
+    <script src="codeMirror/lib/codemirror.js"></script>
+    <script src="codeMirror/javascript.js"></script>
+    <script src="codeMirror/closebrackets.js"></script>
+    <script src="codeMirror/matchbrackets.js"></script>
+    <link rel="stylesheet" href="codeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="css/myCodeEditorTheme.css">
 </head>
+<style>
+body{
+    background-color: rgb(219, 219, 219);
+}
+#run {
+    position: relative;
+    right: 6px;
+    background-color: rgb(2, 97, 212);
+    padding: 10px;
+    border-radius: 3px;
+}
+#run:active {
+    background-color: rgb(31, 131, 253);
+}
+#runButtonContainer {
+    z-index: 0;
+    color: white;
+    position: relative;
+    padding: 10px;
+    background-color: #2e2e2e;
+}
+#ConsoleContainer {
+    overflow-y: scroll;
+}
+.navbar-light{
+    -webkit-box-shadow: 0px 10px 6px -1px #000000; 
+    box-shadow: 0px 0px 10px -1px #000000;
+}
+#navbar{
+    -webkit-box-shadow: 0px 0px 6px -1px #000000; 
+    box-shadow: 0px 0px 6px -1px #000000;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+section {
+    padding: 30px;
+}
+console {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 7px;
+    padding-left: 10px;
+    color : rgb(209, 209, 209);
+    font-family:'Courier New', Courier, monospace;
+    font-size: 13px;
+}
+.tock {
+    background-color: rgb(61, 61, 61);
+}
+.tick {
+    background-color: rgb(57, 57, 57);
+}
+.example {
+    font-family:'Courier New', Courier, monospace;
+    padding: 10px;
+    padding-left: 30px;
+    background-color:rgb(201, 201, 201);
+    border-radius: 10px;
+}
+.example > p {
+    position: relative;
+    top: 8px;
+}
+.passed {
+    filter: opacity(.3);
+}
+.fadeOut {
+    filter: opacity(.3);
+    animation-name: fadeOut;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration:200ms;
+}
+@keyframes fadeOut {
+	0% {
+		filter: opacity(1);
+	}
+	100% {
+		filter: opacity(.3);
+	}
+}
+</style>
 <script>
 class Test {
     title;
@@ -186,92 +285,24 @@ var newPost = {
     },
     body: JSON.stringify(newTest)
 }
-fetch('http://137.184.237.82:3000/postLab', newPost).then((response) => response.json()).then((data) => {
+fetch('http://127.0.0.1:3000/postLab', newPost).then((response) => response.json()).then((data) => {
     console.log(data.URL);
 });
 </script>
-<style>
-#mainBodyContainer {
-    position: relative;
-    margin: auto;
-    width: 100%;
-    background-color: teal;
-    display: inline-flex;
-    flex-direction: row;
-}
-.contentPane {
-    position: relative;
-    width: 100%;
-    background : magenta;
-}
-editor {
-    background-color: blue;
-}
-
-summary {
-    background-color: pink;
-}
-preview {
-    background-color: yellow;
-}
-
-</style>
-<script>
-var editorElement;
-var summaryElement;
-var previewElement;
-window.onload = function(){
-    var a = 7;
-    var b = 10;
-
-    // var x = whatisthis(2, (a, b));
-    // console.log(x);
-    editorElement = document.getElementsByTagName("editor")[0];
-    summaryElement = document.getElementsByTagName("summary")[0];
-    previewElement = document.getElementsByTagName("preview")[0];
-    console.log(JSON.stringify(editorElement));
-    console.log(editorElement);
-    console.log(summaryElement);
-    console.log(previewElement);
-}
-</script>
-<script>
-class domElement{
-    parentElement;
-    childrenElemets;
-    tagName;
-    id;
-    classList;
-    innerText;
-    constructor(elmData){
-        this.tagName = elmData.tagName;
-        this.id = elmData.id;
-        this.classList = elmData.classList;
-    }
-    buildTree(){
-        var newElement = document.createElement("div");
-        return newElement;
-    }
-}
-function whatisthis(x, z){
-    return x+y;
-}
-</script>
 <body>
-<div id = "navbar">
-    <div id="menuScreen" class="hide">
-        <a href="calculatorClone.html">Macintosh Calculator Clone</a>
-        <a href="2048.html">A Simple Game of 2048</a>
-        <a href="https://blasphelmy.github.io/aBasicJavascriptVisualizer/">Javascript Scoper</a>
-        <hr>
-        <a href="about.html">About Me</a>
-        <a href="about.html#projects">Projects</a>
-        <a href="about.html#contactsBlock">Contact Me</a>
-        <a href="resume.html">Resume</a>
-        <hr>
-    </div>
-    <a href="index.html"><h1 style="display: inline-block">JS Worksheet Generator</h1></a> <div id = "menuButtonContainer" onclick="menuBarClick()"><div id="menuButton"><p>|</p><p>|</p><p>|</p></div></div>
-    </div>
+    <nav id ="navBar" class="navbar navbar-dark navbar-expand-md" style="background: rgb(61, 61, 61);color: rgb(224,224,224);padding: 15px;">
+        <div class="container-fluid"><a class="navbar-brand" href="#" style="color: rgba(255,255,255,0.9);font-size: 30px;">JS Lessons</a>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="#" style="color: rgb(97,161,255);">Create a Lesson</a></li>
+                    <li class="nav-item"></li>
+                    <li class="nav-item"></li>
+                </ul>
+            </div><input class="form-control-sm" type="search" style="margin-left: 0px; border-radius: 10px; border-style: none;" placeholder="Search ie : 305502808432711">
+            <button class="btn btn-primary btn-sm" type="button" style="margin-left: 10px;border-radius: 10px;height: 31px;">Search</button>
+            <button data-bs-target="#navcol-1" data-bs-toggle="collapse" class="navbar-toggler"><span class="visually-hidden">Toggle navigation</span><span class="navbar-dark navbar-toggler-icon"></span></button>
+        </div>
+    </nav>
 <div id = "mainBodyContainer">
     <editor>
     <div class="contentPane">
