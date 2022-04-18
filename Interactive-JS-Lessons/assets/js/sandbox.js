@@ -16,7 +16,8 @@ const options = {
   },
   body: JSON.stringify(data)
 }
-fetch('https://137.184.237.82:8443/requestLab', options).then((response) => response.json()).then((data) => {
+fetch('http://137.184.237.82:3000/requestLab', options).then((response) => response.json()).then((data) => {
+  //i still need to create the ssl certs for the server. so we will just use http for now. I mean its not like im sending anything too interesting
     if(data.error){
         console.log(data.error);
     }else{
