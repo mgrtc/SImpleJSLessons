@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>backendServer</title>
+    <script src="assets/js/jquery.js"></script>
+    
     <!-- default bootstrap items -->
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
@@ -21,11 +23,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.1.0-next-2bf5eba72-20220416/umd/react.production.min.js"></script> -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <script src="assets/js/helpers.js"></script>
     <script src="assets/js/objects.js"></script>
     <script src="assets/js/tools.js"></script>
     <script src="assets/js/jsStringTools.js"></script>
-    <script src="assets/js/jquery.js"></script>
     <script src="assets/js/sandbox.js"></script>
 </head>
 <style>
@@ -119,20 +119,9 @@ console {
 }
 </style>
 <script>
-// window.onload = function (){//THIS IS FOR TESTING PURPOSES. 
-//     var results = breakIntoComponents(localStorage.getItem("textArea"));
-//     console.log(results.join("\n"));
-// //   console.log(Number((window.location.href).split('?')[1].split('=')[1]));
-
-//     var x = function(e){
-//     return e;
-//     };
-//     console.log(x(34));
-//     console.log("match };", "match };".match(/([}])/));
-    
-//     (()=>{
-//         console.log(10);
-//     })()
+// window.onload = function(){
+//     var elemnt = $("#searchButton");
+//     console.log("search button is", elemnt);
 // }
 </script>
 <body class="flex-column">
@@ -144,8 +133,8 @@ console {
                     <li class="nav-item"></li>
                     <li class="nav-item"></li>
                 </ul>
-            </div><input class="form-control-sm" type="search" style="margin-left: 0px; border-radius: 10px; border-style: none;" placeholder="Search ie : 305502808432711">
-            <button class="btn btn-primary btn-sm" type="button" style="margin-left: 10px;border-radius: 10px;height: 31px;">Search</button>
+            </div><input id="searchField" class="form-control-sm" type="search" style="margin-left: 0px; border-radius: 10px; border-style: none;" placeholder="Search ie : 305502808432711">
+            <button id="searchButton" class="btn btn-primary btn-sm" type="button" style="margin-left: 10px;border-radius: 10px;height: 31px;">Search</button>
             <button data-bs-target="#navcol-1" data-bs-toggle="collapse" class="navbar-toggler"><span class="visually-hidden">Toggle navigation</span><span class="navbar-dark navbar-toggler-icon"></span></button>
         </div>
     </nav>
@@ -162,9 +151,11 @@ console {
         </div>
     </div>
 <!-- react scripts -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
 <script type="text/babel" src="assets/js/lessonPage.jsx"></script>
+<script src="assets/js/helpers.js"></script>
 </body>
 
 </html>

@@ -207,55 +207,10 @@ class functionTest {
 function populateATesterTest() {
     var newTest = new Test("Welcome to Programming");
 
-    var newQuestion = new Question("hi :)");
-    newQuestion.setExample("convertCtoF(input){ }");
-    newQuestion.setTitle("Create a function to convert between F and C");
-    var newFunctionTest = new functionTest("convertFtoC");
-    newFunctionTest.addTest("32", "0");
-    newFunctionTest.addTest("82", "27.77777777777778");
-    newQuestion.addFunctionRequirements(newFunctionTest);
-    var newFunctionTest = new functionTest("convertCtoF");
-    newFunctionTest.addTest("0", "32");
-    newFunctionTest.addTest("27.77777777777778", "82");
-    newQuestion.addFunctionRequirements(newFunctionTest);
+    var newQuestion = new Question("Start by either coding in the code editor on your right, or you can search up some lessons using the LabID");
+    newQuestion.setExample(`Lab IDS to try: 287803215826204
+    sorry, havent really started working on this portion of the project yet.`);
     newTest.addQuestion(newQuestion);
-
-    newQuestion = new Question("Write code that will console.log out 5 and 6 && Write code that will set x = 5, y = 6, and z = 9");
-    newQuestion.setExample(`console.log("hello world")\nvar x = 10;`);
-    newQuestion.setTitle("The Console");
-    newQuestion.addConsoleRequirements("5");
-    newQuestion.addConsoleRequirements("6");
-
-    var newVariableTest = new variableTest("x", 5);
-    newQuestion.addVariableRequirements(newVariableTest);
-    newVariableTest = new variableTest("y", 6);
-    newQuestion.addVariableRequirements(newVariableTest);
-    newVariableTest = new variableTest("z", 9);
-    newQuestion.addVariableRequirements(newVariableTest);
-
-    newTest.addQuestion(newQuestion);
-
-    newQuestion = new Question(`Write code that will set x = 5, y = 6, and z = 9     <ul>
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-    </ul>`);
-    newQuestion.setExample("var x = 10");
-    newQuestion.setTitle("Setting Variables");
-    var newVariableTest = new variableTest("x", 5);
-    newQuestion.addVariableRequirements(newVariableTest);
-    newVariableTest = new variableTest("y", 6);
-    newQuestion.addVariableRequirements(newVariableTest);
-    newVariableTest = new variableTest("z", 9);
-    newQuestion.addVariableRequirements(newVariableTest);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-
     return newTest;
 }
 

@@ -83,9 +83,7 @@ function injectHelpers(array, start){
     newArray = removeEmptyIndices(newArray);
     return newArray;
 }
-// this.questionTitle = data.questionTitle;
-// this.text = data.questionText;
-// this.example = data.example;
+
 // function displayTests(newTest){
 //   var lessonPage = document.getElementById("lessonPage");
 //   lessonPage.appendChild(function(){

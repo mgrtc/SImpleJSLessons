@@ -7,6 +7,11 @@ window.onload = function(){
     elementOffSetter = document.getElementById("ConsoleContainer");
     var y = document.getElementById("runButtonContainer").offsetHeight;
     fillVerticalHeight(element, elementOffSetter.offsetHeight + x + y);
+    document.getElementById("searchButton").addEventListener("click", function(){
+        var newLabID = document.getElementById("searchField").value;
+        window.location.href = "/?labID=" + newLabID;
+    });
+    fetchData();
 }
 window.onresize = function(){
     var element = document.getElementsByClassName("heightAdjustment");
