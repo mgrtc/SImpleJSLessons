@@ -86,30 +86,30 @@ function injectHelpers(array, start){
 // this.questionTitle = data.questionTitle;
 // this.text = data.questionText;
 // this.example = data.example;
-function displayTests(newTest){
-  var lessonPage = document.getElementById("lessonPage");
-  lessonPage.appendChild(function(){
-    var newSection = document.createElement("section");
-    newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
-    return newSection;
-  }());
-    for( let i in newTest.returnQuestionSet()){
-      // console.log(newTest.returnQuestionSet()[i]);
-      let newQuestion = newTest.returnQuestionSet()[i];
-      // console.log($("#test-display"));
-      lessonPage.appendChild(function(){
-        let number = Number(i) + 1; //why not just i+1????
-        let data = {
-          questionTitle : `${number}) ` + newQuestion.title,
-          questionText : newQuestion.text,
-          example : newQuestion.example,
-          ID: `test-num-${i}`,
-          classList : []
-        }
-        return (new Section(data)).returnNewDomElement();
-      }());
-    }
-}
+// function displayTests(newTest){
+//   var lessonPage = document.getElementById("lessonPage");
+//   lessonPage.appendChild(function(){
+//     var newSection = document.createElement("section");
+//     newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
+//     return newSection;
+//   }());
+//     for( let i in newTest.returnQuestionSet()){
+//       // console.log(newTest.returnQuestionSet()[i]);
+//       let newQuestion = newTest.returnQuestionSet()[i];
+//       // console.log($("#test-display"));
+//       lessonPage.appendChild(function(){
+//         let number = Number(i) + 1; //why not just i+1????
+//         let data = {
+//           questionTitle : `${number}) ` + newQuestion.title,
+//           questionText : newQuestion.text,
+//           example : newQuestion.example,
+//           ID: `test-num-${i}`,
+//           classList : []
+//         }
+//         return (new Section(data)).returnNewDomElement();
+//       }());
+//     }
+// }
 
   function makeConsoleTester(logs){ //please remake this
     if(logs.length === 0){
