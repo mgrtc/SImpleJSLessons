@@ -207,7 +207,7 @@ class functionTest {
 function populateATesterTest() {
     var newTest = new Test("Welcome to Programming");
 
-    var newQuestion = new Question("Correct function <b>convertFtoC</b> so that it correctly takes in a degrees in fahrenheit, returns in degrees celcius, then write a function <b>convertCtoF</b> to reverse the conversion");
+    var newQuestion = new Question("hi :)");
     newQuestion.setExample("convertCtoF(input){ }");
     newQuestion.setTitle("Create a function to convert between F and C");
     var newFunctionTest = new functionTest("convertFtoC");
@@ -255,23 +255,6 @@ function populateATesterTest() {
     newTest.addQuestion(newQuestion);
     newTest.addQuestion(newQuestion);
     newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
-    newTest.addQuestion(newQuestion);
 
     return newTest;
 }
@@ -285,7 +268,7 @@ var newPost = {
     },
     body: JSON.stringify(newTest)
 }
-fetch('http://127.0.0.1:3000/postLab', newPost).then((response) => response.json()).then((data) => {
+fetch('http://137.184.237.82:3000/postLab', newPost).then((response) => response.json()).then((data) => {
     console.log(data.URL);
 });
 </script>

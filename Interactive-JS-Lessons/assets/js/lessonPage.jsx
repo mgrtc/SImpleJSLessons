@@ -39,16 +39,16 @@ function displayTests(newTest){
         <section><h1>{newTest.title}</h1></section>
         );
     }());
+
   for( let i in newTest.returnQuestionSet()){
-    // console.log(newTest.returnQuestionSet()[i]);
     let newQuestion = newTest.returnQuestionSet()[i];
-    let newSection = 
-      (<section id={`test-num-${i}`}>
-          <h2>{Number(i) + 1}) {newQuestion.title}</h2>
-          <p dangerouslySetInnerHTML={ { __html: newQuestion.text}}></p>
-        <div className={`example`}><p>{newQuestion.example}</p></div>
-      </section>);
-    elements.push(newSection);
+    elements.push(function(){
+      return (<section id={`test-num-${i}`}>
+      <h2>{Number(i) + 1}) {newQuestion.title}</h2>
+      <p dangerouslySetInnerHTML={ { __html: newQuestion.text}}></p>
+    <div className={`example`}><p>{newQuestion.example}</p></div>
+  </section>)
+    }());
   }
   root.render(elements);
 }
