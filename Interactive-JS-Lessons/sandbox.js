@@ -17,14 +17,11 @@ const options = {
 fetch('http://localhost:3000/requestLab', options).then((response) => response.json()).then((data) => {
 console.log(data);  
 var newTest = new Test(data);
-  // console.log(newTest);
   init(newTest);
 });
 
 window.onload = function (){
   var results = breakIntoComponents(localStorage.getItem("textArea"));
-  // console.log(results);
-  // console.log(Number((window.location.href).split('?')[1].split('=')[1]));
 }
 
 function init(newTest){
@@ -80,7 +77,6 @@ function runCurrentTest(newTest){
 
     storedLogs = [];
     window.storeLogs = function(){
-      //console.log(storedLogs)
       storedLogs.push([...arguments].join(' '));
     }
 
@@ -102,8 +98,7 @@ function runCurrentTest(newTest){
       $(`#test-num-${newTest.currentQuestion}`).css("background-color", "green");
       newTest.nextQuestion();
     }
-    console.log("ft",failedTests);
-    console.log("currentFrame",currentFrame);
+    console.log("failed tests",failedTests);
 }
 
 function generateInjection(newTest){

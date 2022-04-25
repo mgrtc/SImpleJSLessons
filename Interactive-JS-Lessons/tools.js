@@ -9,15 +9,10 @@ function injectHelpers(array, start){
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
             var functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];
-            var args = removeEmptyIndices(functionName)[1].match(/(?<=\()(.+)(?=\))/);
-            // console.log(args);
+            var args = removeEmptyIndices(functionName)[1].match(/(?<=\()(.+)(?=\))/); //this gets the names of all the arguments being passed into a function
             if(args !== null){
               args = args[0].split(",");
-              // args.forEach((arg)=>{
-              //   console.log("arg",arg);
-              // })
             }
-            console.log("functionName", functionName);
             newArray.push(`currentFrame.declaredFunctions.set("${functionName}", true);`);
             newArray.push(array[i]);
             i++;
@@ -83,10 +78,9 @@ function displayTests(newTest){
           ${newTest.returnQuestionSet()[i].returnText()}
         </div>
       `))
-      // console.log($("#test-display"));
     }
 }
-
+git
 function makeConsoleTester(logs){ //please remake this
   if(logs.length === 0){
     return ``
@@ -94,7 +88,6 @@ function makeConsoleTester(logs){ //please remake this
   return `
   var logs = ${JSON.stringify(logs)};
   for(log of logs){
-  //   console.log("W-logs:", logs, "S-logs:", storedLogs,  "log:", log, "found:", storedLogs.indexOf(log.toString()) === -1 );
     if(storedLogs.indexOf(log) === -1 ){
       failedTests.push(log);
     }else{
@@ -112,7 +105,7 @@ function searchFramesForVariable(variableName, value, startingFrame, frameName){
   {
     return true;
   }
-  for(child of startingFrame.childrenFrame){
+  for(child of startingFrame.childrenFrame){ //If we didn't find it in this frame, check all its children recursively
     if(searchFramesForVariable(variableName, value, child, frameName)){
       return true;
     }

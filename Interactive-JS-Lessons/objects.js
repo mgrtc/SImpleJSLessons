@@ -10,7 +10,6 @@ class Test{
         this.addQuestion(newQuestion);
       }
     }
-    console.log("testing:", this)
   }
   //add question setters and getters
   addQuestion(newQuestion){
@@ -57,7 +56,6 @@ class Question{
     this.logs.push(testCase);
   }
   addVariableRequirements(newVariableTest){
-    // console.log("newVariableTest:", newVariableTest);
     this.vars.push({name: newVariableTest.name, val: newVariableTest.val});
   }
   addFunctionRequirements(newFunctionTest){ //string, array[{input = "", output = ""}, ..]
@@ -139,7 +137,7 @@ class Frame {
   }
   updateVariable(name, value){
     var newFrame = returnFrameContainingVariable(this, name);
-    //logDup(newFrame.name + " contains " + name);
+
     if(newFrame.variables.has(name)){
       var newVariable = newFrame.variables.get(name);
       newVariable.value = value;
@@ -149,7 +147,7 @@ class Frame {
     }
   }
   findVariable(variableName){
-     return this.variables.get(variableName);
+    return this.variables.get(variableName);
   }
 }
 class Variable{
