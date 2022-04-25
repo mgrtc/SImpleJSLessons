@@ -53,10 +53,12 @@ function addRunButtonEventListener(element, newTest){
   });
 }
 var logToPage  = function(){
-  var args = [...arguments];
-  $("#console").append($(`<br>`));
-  for(arg of args){
-      $("#console").append($(`<console>${arg} </console>`));
+  if(window.testing !== true){
+    var args = [...arguments];
+    $("#console").append($(`<br>`));
+    for(arg of args){
+        $("#console").append($(`<console>${arg} </console>`));
+    }
   }
 };
 function runCurrentTest(newTest){

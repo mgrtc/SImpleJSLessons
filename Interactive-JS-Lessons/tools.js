@@ -58,9 +58,7 @@ function injectHelpers(array, start){
           var logArray = JSON.stringify(logString.split(","));
           newArray.push(`{
             let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ");
-            if(window.testing !== true){
-              logToPage(logString);
-            }
+            logToPage(logString);
             storeLogs(logString);
             console.log(logString);
           }`)
