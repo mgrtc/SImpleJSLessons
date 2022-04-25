@@ -11,6 +11,7 @@ function breakIntoComponents(inputString) {
     var outputArray = splitByBrackets(inputString);
     outputArray = combineSemiColonsWithPreviousLines(outputArray);
     outputArray = injectHelpers(outputArray);
+    console.log(outputArray);
     return outputArray;
   }
   function splitByBrackets(inputString){
