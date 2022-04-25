@@ -1,4 +1,5 @@
 function injectHelpers(array, start){
+  // console.log("array before injection : ", array);
     var newArray = new Array();
     var newStack = new Stack();
     if(typeof(start) === "undefined"){
@@ -9,12 +10,17 @@ function injectHelpers(array, start){
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
             var functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];
+            var inputs = trimStringInArray(array[i].split("function ")[1].split(/[(|)]/)[1].split(","));
+            // console.log("inputs: ", inputs);
             // console.log("functionName", functionName);
             newArray.push(`currentFrame.declaredFunctions.set("${functionName}", true);`);
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
+            for(string of inputs){
+              newArray.push(`currentFrame.addVariable("var", "${string}", ${string});`); //all javascript inputs are var's
+            }
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
@@ -22,69 +28,128 @@ function injectHelpers(array, start){
           newArray.push(array[i]);
         }  
         else if(array[i].match(/(^var)+([ ]+)/)){
+          var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+          if(array[i+1].match(/[{]/)){ //tests if anon function is declared
             newArray.push(array[i]);
-            var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
+            i++;
+            newArray.push(array[i]);
+            newStack.push(variableName);
+            newStack.push("var");
+            newStack.push("anonFunctionOrObject");
+            continue;
+          }
+          newArray.push(array[i]);
+          newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
-            newArray.push(array[i]);
-
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+            if(array[i+1].match(/[{]/)){
+              newArray.push(array[i]);
+              i++;
+              newArray.push(array[i]);
+              newStack.push(variableName);
+              newStack.push("let");
+              newStack.push("anonFunctionOrObject");
+              continue;
+            }
+            newArray.push(array[i]);
             newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
         }
-        else if(detectStatementVariableReassignment(array[i])){
+        else if(array[i].match(/(^const)+([ ]+)/)){
+          var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+          if(array[i+1].match(/[{]/)){
             newArray.push(array[i]);
-            var variableName = array[i].split(/=/)[0].trim();
+            i++;
+            newArray.push(array[i]);
+            newStack.push(variableName);
+            newStack.push("const");
+            newStack.push("anonFunctionOrObject");
+            continue;
+          }
+          newArray.push(array[i]);
+          newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
+      }
+        else if(detectStatementVariableReassignment(array[i])){
+          var variableName = array[i].split(/=/)[0].trim();  
+          if(array[i+1].match(/[{]/)){
+              newArray.push(array[i]);
+              i++;
+              newArray.push(array[i]);
+              newStack.push(variableName);
+              newStack.push("variableRedeclaration");
+              continue;
+            }
+            newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
             newArray.push("currentFrame = currentFrame.returnParentFrame();")
             newArray.push(array[i]);
-            i++;
-            newArray.push(array[i]);
+            // i++;
+            // newArray.push(array[i]);
         }
-        else if(array[i].match(/([}])/)){
-          if(newStack.peek() === "function"){
-            newArray.push("currentFrame = currentFrame.returnParentFrame();")
+        else if(array[i].match(/}/g)){
+          if(newStack.peek() === "anonFunctionOrObject"){
+            // console.log("hello");
+            newStack.pop();
+            newArray.push(array[i]);
+            let type = newStack.pop();
+            let name = newStack.pop();
+            newArray.push(`currentFrame.addVariable("${type}", "${name}", ${name});`);
           }
+          else if(newStack.peek() === "function"){
+            newArray.push("currentFrame = currentFrame.returnParentFrame();")
             newArray.push(array[i]);
             newStack.pop();
+          }
+          else if(newStack.peek() === "variableRedeclaration"){
+            newStack.pop();
+            let variableName = newStack.pop();
+            newArray.push(array[i]);
+            newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
+          }
+          else if(newStack.peek("{")){
+            newArray.push(array[i]);
+            newStack.pop();
+          }
+        }else if(array[i].match(/[{]/g)){
+          newArray.push(array[i]);
+          newStack.push("{");
         }
         else{
             newArray.push(array[i]);
         }
+        // console.log(newStack);
     }
     newArray = trimStringInArray(newArray);
     newArray = removeEmptyIndices(newArray);
     return newArray;
 }
-// this.questionTitle = data.questionTitle;
-// this.text = data.questionText;
-// this.example = data.example;
-function displayTests(newTest){
-  var lessonPage = document.getElementById("lessonPage");
-  lessonPage.appendChild(function(){
-    var newSection = document.createElement("section");
-    newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
-    return newSection;
-  }());
-    for( var i in newTest.returnQuestionSet()){
-      console.log(newTest.returnQuestionSet()[i]);
-      var newQuestion = newTest.returnQuestionSet()[i];
-      // console.log($("#test-display"));
-      lessonPage.appendChild(function(){
-        let number = Number(i) + 1; //why not just i+1????
-        let data = {
-          questionTitle : `${number}) `+newQuestion.title,
-          questionText : newQuestion.text,
-          example : newQuestion.example,
-          ID: `test-num-${i}`,
-          classList : []
-        }
-        return (new Section(data)).returnNewDomElement();
-      }());
-    }
-}
+
+// function displayTests(newTest){
+//   var lessonPage = document.getElementById("lessonPage");
+//   lessonPage.appendChild(function(){
+//     var newSection = document.createElement("section");
+//     newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
+//     return newSection;
+//   }());
+//     for( let i in newTest.returnQuestionSet()){
+//       // console.log(newTest.returnQuestionSet()[i]);
+//       let newQuestion = newTest.returnQuestionSet()[i];
+//       // console.log($("#test-display"));
+//       lessonPage.appendChild(function(){
+//         let number = Number(i) + 1; //why not just i+1????
+//         let data = {
+//           questionTitle : `${number}) ` + newQuestion.title,
+//           questionText : newQuestion.text,
+//           example : newQuestion.example,
+//           ID: `test-num-${i}`,
+//           classList : []
+//         }
+//         return (new Section(data)).returnNewDomElement();
+//       }());
+//     }
+// }
 
   function makeConsoleTester(logs){ //please remake this
     if(logs.length === 0){

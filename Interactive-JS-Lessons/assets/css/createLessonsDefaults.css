@@ -1,0 +1,157 @@
+body{
+    background-color: rgb(219, 219, 219);
+}
+#run {
+    position: relative;
+    right: 6px;
+    background-color: rgb(2, 97, 212);
+    padding: 10px;
+    border-radius: 3px;
+}
+#run:active {
+    background-color: rgb(31, 131, 253);
+}
+#runButtonContainer {
+    z-index: 0;
+    color: white;
+    position: relative;
+    padding: 10px;
+    background-color: #2e2e2e;
+}
+#ConsoleContainer {
+    overflow-y: scroll;
+}
+.navbar-light{
+    -webkit-box-shadow: 0px 10px 6px -1px #000000; 
+    box-shadow: 0px 0px 10px -1px #000000;
+}
+#navbar{
+    -webkit-box-shadow: 0px 0px 6px -1px #000000; 
+    box-shadow: 0px 0px 6px -1px #000000;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+section {
+    padding: 30px;
+}
+console {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 7px;
+    padding-left: 10px;
+    color : rgb(209, 209, 209);
+    font-family:'Courier New', Courier, monospace;
+    font-size: 13px;
+}
+.tock {
+    background-color: rgb(61, 61, 61);
+}
+.tick {
+    background-color: rgb(57, 57, 57);
+}
+.example {
+    font-family:'Courier New', Courier, monospace;
+    padding: 10px;
+    padding-left: 30px;
+    background-color:rgb(201, 201, 201);
+    border-radius: 10px;
+}
+.example > p {
+    position: relative;
+    top: 8px;
+}
+.passed {
+    filter: opacity(.3);
+}
+.fadeOut {
+    filter: opacity(.3);
+    animation-name: fadeOut;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration:200ms;
+}
+@keyframes fadeOut {
+	0% {
+		filter: opacity(1);
+	}
+	100% {
+		filter: opacity(.3);
+	}
+}
+.formLabels {
+    margin-top: 5px;
+  }
+  
+  .form-label {
+    margin-top: 5px;
+  }
+  #submitNewFunctionbtn {
+    margin-left: 0px;
+    margin-top: 4px;
+    position: relative;
+    display: inline;
+    float: right;
+    height: 31px;
+    background-color: rgb(74, 74, 74);
+    border: none;
+    border-radius: 8px;
+  }
+  #functNameInput{
+      position: relative;
+      display: inline-block;
+      margin: 0px;
+      margin-top: 15px;
+      width:100px;
+      height: 34px;
+      z-index: 0;
+      background-color: rgb(237, 237, 237);
+  }
+  input {
+      margin-top: 15px;
+  }
+  
+  textarea {
+    margin-top: 15px;
+    resize: none;
+  }
+  
+  section {
+      background-color: white;
+      border-radius: 10px;
+  }
+  .list-group-item{
+    padding-top: 3px;
+  }
+  .functionTestTab{
+    position: relative;
+    left: 5px;
+    margin-left: -5px;
+    margin-top: 15px;
+    display: inline-block;
+    background-color:rgb(194, 193, 193);
+    padding: 8px;
+    font-size: smaller;
+    transition: all 100ms;
+    cursor: pointer;
+}
+.functionTestTab:hover {
+    background-color:rgb(181, 203, 211);
+}
+.right {
+    border-top-right-radius: 8px;
+}
+.left {
+    border-top-left-radius: 8px;
+}
+#addFntest{
+    display: inline-block;
+}
+  

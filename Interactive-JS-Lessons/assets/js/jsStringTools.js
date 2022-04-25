@@ -1,5 +1,6 @@
 
 function breakIntoComponents(inputString) {
+    // console.log(inputString);
     //this needs more work
     //first, we must first remove all line breaks and whitespace. we also assume that user writes javascript with the use of semi colons...
     //inputString = inputString.replace(/\n/g, " ");
