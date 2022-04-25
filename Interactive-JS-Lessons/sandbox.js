@@ -115,9 +115,11 @@ function generateInjection(newTest){
 
   //push other tests here.
   newArray.push("(()=>{");
+  newArray.push(initializeTests());
   newArray.push(makeConsoleTester(newTest.returnCurrentQuestion().logs));
   newArray.push(makeVariableTester(newTest.returnCurrentQuestion().vars));
   newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
+  newArray.push(finishTests());
   newArray.push("})()");
   newArray.push(`
   window.currentFrame = currentFrame.returnDefaultFrame();

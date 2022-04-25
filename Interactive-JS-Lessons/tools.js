@@ -58,7 +58,9 @@ function injectHelpers(array, start){
           var logArray = JSON.stringify(logString.split(","));
           newArray.push(`{
             let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ");
-            logToPage(logString);
+            if(window.testing !== true){
+              logToPage(logString);
+            }
             storeLogs(logString);
             console.log(logString);
           }`)
@@ -80,6 +82,15 @@ function displayTests(newTest){
       `))
     }
 }
+
+function initializeTests(){
+  return `window.testing = true;`
+}
+
+function finishTests(){
+  return `window.testing = false;`
+}
+
 function makeConsoleTester(logs){ //please remake this
   if(logs.length === 0){
     return ``
