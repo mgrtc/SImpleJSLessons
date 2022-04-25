@@ -64,12 +64,14 @@ class Question{
   
 }
 class variableTest{
-  type; //eg var, let, or... am i missing anything? *currently not used.
+  type; //eg var, let, or const *currently not used.
   name; //name
   val; //value. strings allowed
-  constructor(name, value){
+  func; //the name of the function/frame who's scope we expect the variable to be declared in
+  constructor(name, value, func = "default"){
     this.name = name;
     this.val = value;
+    this.func = func;
   }
 }
 class functionTest{
@@ -135,7 +137,7 @@ class Frame {
   }
   updateVariable(name, value){
     var newFrame = returnFrameContainingVariable(this, name);
-    //logdup(newFrame.name + " contains " + name);
+
     if(newFrame.variables.has(name)){
       var newVariable = newFrame.variables.get(name);
       newVariable.value = value;
@@ -144,14 +146,9 @@ class Frame {
       newFrame.addVariable("default", name, value);
     }
   }
-  findVariable(variableName, scope){
-    if(this.name !== "default"){
-      return "error: ";
-    }else{
-
-    }
+  findVariable(variableName){
+    return this.variables.get(variableName);
   }
-
 }
 class Variable{
   type; //lets, or vars
