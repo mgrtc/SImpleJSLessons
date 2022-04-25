@@ -38,6 +38,7 @@ class Question{
   vars; //variables to be detected
   functs; //functions to be made, along with tests.
   //we got three types of questions so far, asking for console.logs; asking to create variables with specific values, function name and expected inputs/outputs
+
   constructor(data){
     this.text = data.text;
     this.logs = data.logs;
@@ -81,9 +82,11 @@ class variableTest{
 class functionTest{
   name; //function name without the parenthesis
   tests; //
+  functionDefinition;
   constructor(name){
     this.name = name;
     this.tests = new Array();
+    this.functionDefinition = "";
   }
   addTest(testInput, expectedOutput){ //testInput = "<string>" ie: "3", 
     this.tests.push({input: testInput, output : expectedOutput});

@@ -24,12 +24,13 @@ function injectHelpers(array, start){
         }  
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(array[i].split(/=/)[1].trim().match(/(^function)+([ ]*)+([(])/)){ //tests if anon function is declared
+          if(array[i+1].match(/[{]/)){ //tests if anon function is declared
+            newArray.push(array[i]);
+            i++;
             newArray.push(array[i]);
             newStack.push(variableName);
             newStack.push("var");
-            newStack.push("anonFunction");
-            // console.log(newStack);
+            newStack.push("anonFunctionOrObject");
             continue;
           }
           newArray.push(array[i]);
@@ -37,19 +38,43 @@ function injectHelpers(array, start){
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            if(array[i].split(/=/)[1].trim().match(/(^function)+([ ]*)+([(])/)){
+            if(array[i+1].match(/[{]/)){
+              newArray.push(array[i]);
+              i++;
               newArray.push(array[i]);
               newStack.push(variableName);
               newStack.push("let");
-              newStack.push("anonFunction");
+              newStack.push("anonFunctionOrObject");
               continue;
             }
             newArray.push(array[i]);
             newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
         }
-        else if(detectStatementVariableReassignment(array[i])){
+        else if(array[i].match(/(^const)+([ ]+)/)){
+          var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+          if(array[i+1].match(/[{]/)){
             newArray.push(array[i]);
-            var variableName = array[i].split(/=/)[0].trim();
+            i++;
+            newArray.push(array[i]);
+            newStack.push(variableName);
+            newStack.push("const");
+            newStack.push("anonFunctionOrObject");
+            continue;
+          }
+          newArray.push(array[i]);
+          newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
+      }
+        else if(detectStatementVariableReassignment(array[i])){
+          var variableName = array[i].split(/=/)[0].trim();  
+          if(array[i+1].match(/[{]/)){
+              newArray.push(array[i]);
+              i++;
+              newArray.push(array[i]);
+              newStack.push(variableName);
+              newStack.push("variableRedeclaration");
+              continue;
+            }
+            newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
@@ -59,20 +84,32 @@ function injectHelpers(array, start){
             // newArray.push(array[i]);
         }
         else if(array[i].match(/}/g)){
-          if(newStack.peek() === "anonFunction"){
+          if(newStack.peek() === "anonFunctionOrObject"){
             // console.log("hello");
             newStack.pop();
             newArray.push(array[i]);
             let type = newStack.pop();
             let name = newStack.pop();
             newArray.push(`currentFrame.addVariable("${type}", "${name}", ${name});`);
-            continue;
           }
-          if(newStack.peek() === "function"){
+          else if(newStack.peek() === "function"){
             newArray.push("currentFrame = currentFrame.returnParentFrame();")
-          }
             newArray.push(array[i]);
             newStack.pop();
+          }
+          else if(newStack.peek() === "variableRedeclaration"){
+            newStack.pop();
+            let variableName = newStack.pop();
+            newArray.push(array[i]);
+            newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
+          }
+          else if(newStack.peek("{")){
+            newArray.push(array[i]);
+            newStack.pop();
+          }
+        }else if(array[i].match(/[{]/g)){
+          newArray.push(array[i]);
+          newStack.push("{");
         }
         else{
             newArray.push(array[i]);

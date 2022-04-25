@@ -9,7 +9,7 @@ const hash = require("./myModules/hash/hash.js");
 const bodyParser = require('body-parser');
 const { json } = require('express/lib/response');
 const app = express();
-const rateLimit = require('express-rate-limit')
+const rateLimit = require('express-rate-limit');
 
 //in order for https to work when running it on your local machine. You must create your own ssl cert. ASP.net requires https for fetch() api
 //!IMPORTANT: https://stackoverflow.com/questions/21397809/create-a-trusted-self-signed-ssl-cert-for-localhost-for-use-with-express-node
@@ -21,9 +21,9 @@ var credentials = {key: privateKey, cert: certificate};
 var httpsServer = https.createServer(credentials, app);
 
 const limiter = rateLimit({
-	windowMs: 10 * 60 * 1000, // 10 minute time window
-	max: 15, // Limit each IP to x requests per time `window`
-})
+	windowMs: 2 * 1000, // 2 second time window
+	max: 10, // Limit each IP to x requests per time `window`
+});
 
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
