@@ -10,12 +10,17 @@ function injectHelpers(array, start){
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
             var functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];
+            var inputs = trimStringInArray(array[i].split("function ")[1].split(/[(|)]/)[1].split(","));
+            // console.log("inputs: ", inputs);
             // console.log("functionName", functionName);
             newArray.push(`currentFrame.declaredFunctions.set("${functionName}", true);`);
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
+            for(string of inputs){
+              newArray.push(`currentFrame.addVariable("var", "${string}", ${string});`); //all javascript inputs are var's
+            }
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
