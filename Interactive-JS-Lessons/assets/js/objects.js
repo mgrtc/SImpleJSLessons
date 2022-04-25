@@ -63,7 +63,7 @@ class Question{
     this.logs.push(testCase);
   }
   addVariableRequirements(newVariableTest){
-    this.vars.push({name: newVariableTest.name, val: newVariableTest.val});
+    this.vars.push({name: newVariableTest.name, val: newVariableTest.val, path: newVariableTest.scopeName});
   }
   addFunctionRequirements(newFunctionTest){ //string, array[{input = "", output = ""}, ..]
     this.functs.push({name: newFunctionTest.name, tests : newFunctionTest.tests});
@@ -74,9 +74,11 @@ class variableTest{
   type; //eg var, let, or... am i missing anything? *currently not used.
   name; //name
   val; //value. strings allowed
-  constructor(name, value){
+  scopeName;
+  constructor(name, value, scopeName){
     this.name = name;
     this.val = value;
+    this.scopeName = scopeName;
   }
 }
 class functionTest{

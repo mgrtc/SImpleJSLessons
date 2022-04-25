@@ -108,11 +108,12 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
           }
-          else if(newStack.peek("{")){
+          else if(newStack.peek().match(/{/g) || newStack.peek() === "ifelse"){
             newArray.push(array[i]);
             newStack.pop();
           }
-        }else if(array[i].match(/[{]/g)){
+        }
+        else if(array[i].match(/{/)){
           newArray.push(array[i]);
           newStack.push("{");
         }
@@ -174,19 +175,20 @@ function injectHelpers(array, start){
       return ``
     }
     return `
-    var vars = ${JSON.stringify(vars)};
-    for(variable of vars){
-      try{
-        if(JSON.stringify(eval(variable.name)) !== JSON.stringify(variable.val)){
-          failedTests.push(variable);
-        }
-      }catch{
-        failedTests.push(variable);
-      }
-    }
+    // var vars = ${JSON.stringify(vars)};
+    // for(variable of vars){
+    //   let newFrame = findVariable(variable);
+
+    // }
     `
   }
-  
+  // function findVariable(data){
+  //   var 
+  // }
+  function findScope(scopeName){
+    var newArray = [];
+    
+  }  
   function makeFunctionTester(functs){
     if(functs.length === 0){
       return ``;

@@ -217,12 +217,12 @@ class Question {
     vars; //variables to be detected
     functs; //functions to be made, along with tests.
     //we got three types of questions so far, asking for console.logs; asking to create variables with specific values, function name and expected inputs/outputs
-    constructor(text) {
-        this.text = text;
+    constructor(title) {
+        this.text = "";
         this.logs = [];
         this.vars = [];
         this.functs = [];
-        this.title = "";
+        this.title = title;
         this.example = "";
     }
     returnText() {
@@ -241,7 +241,7 @@ class Question {
         this.logs.push(testCase);
     }
     addVariableRequirements(newVariableTest) {
-        this.vars.push({ name: newVariableTest.name, val: newVariableTest.val });
+        this.vars.push({ name: newVariableTest.name, val: newVariableTest.val, scopeName:  newVariableTest.scopeName});
     }
     addFunctionRequirements(newFunctionTest) { //string, array[{input = "", output = ""}, ..]
         this.functs.push({ name: newFunctionTest.name, tests: newFunctionTest.test, functionDefinition:newFunctionTest.functionDefinition });
@@ -249,8 +249,8 @@ class Question {
     setExample(newExample){
         this.example = newExample;
     }
-    setTitle(text){
-        this.title = text;
+    setBody(text){
+        this.text = text;
     }
 
 }
@@ -258,9 +258,11 @@ class variableTest {
     type; //eg var, let, or... am i missing anything? *currently not used.
     name; //name
     val; //value. strings allowed
-    constructor(name, value) {
+    scopeName;
+    constructor(name, value, scopeName) {
         this.name = name;
         this.val = value;
+        this.scopeName = scopeName;
     }
 }
 class functionTest {
@@ -297,6 +299,8 @@ function populateATesterTest() {
             return output;
         }
     `);
+    var newVariableTest = new variableTest("x", 6, "default");
+    newQuestion.addVariableRequirements(newVariableTest);
     newQuestion.addFunctionRequirements(newFunctionTest);
     newTest.addQuestion(newQuestion);
     return newTest;

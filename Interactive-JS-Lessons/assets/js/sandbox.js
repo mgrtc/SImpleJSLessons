@@ -138,6 +138,7 @@ function generateInjection(newTest){
   //here, you inject any lines of code you want
   newArray.push(`
   var currentFrame = new Frame();
+  var scopeMap = new Map();
   `);
 
   //begin parsing of code in code editor;
