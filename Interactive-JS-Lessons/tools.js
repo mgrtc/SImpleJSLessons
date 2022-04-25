@@ -80,7 +80,6 @@ function displayTests(newTest){
       `))
     }
 }
-git
 function makeConsoleTester(logs){ //please remake this
   if(logs.length === 0){
     return ``
