@@ -290,18 +290,9 @@ function populateATesterTest() {
     var newTest = new Test("Welcome to Programming");
 
     var newQuestion = new Question(``);
-    newQuestion.setExample(`Lab IDS to try: 287803215826204
-    sorry, havent really started working on this portion of the project yet.`);
-    var newFunctionTest = new functionTest("abc");
-    newFunctionTest.setDefinition(`
-        function abc(input){
-            var output = input + 10;
-            return output;
-        }
-    `);
-    var newVariableTest = new variableTest("x", 6, "default");
+    newQuestion.setExample(`x = 6 in scope of abc `);
+    var newVariableTest = new variableTest("x", 6, "abc");
     newQuestion.addVariableRequirements(newVariableTest);
-    newQuestion.addFunctionRequirements(newFunctionTest);
     newTest.addQuestion(newQuestion);
     return newTest;
 }

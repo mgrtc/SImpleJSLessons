@@ -69,7 +69,7 @@ function injectHelpers(array, start){
           newArray.push(array[i]);
           newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
       }
-        else if(detectStatementVariableReassignment(array[i])){
+      else if(detectStatementVariableReassignment(array[i])){
           var variableName = array[i].split(/=/)[0].trim();  
           if(array[i+1].match(/[{]/)){
               newArray.push(array[i]);
@@ -88,6 +88,17 @@ function injectHelpers(array, start){
             // i++;
             // newArray.push(array[i]);
         }
+        else if(array[i].match(/(^console.log)/)){ 
+          // var logString = array[i].match(/(?<=\()(.+)(?=\))/)[0];
+          var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
+          // console.log("logstring is", logString);
+          var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+          newArray.push(`{
+            let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["]/g, '');
+            logToPage(logString);
+            storeLogs(logString);
+          }`);
+        }  
         else if(array[i].match(/}/g)){
           if(newStack.peek() === "anonFunctionOrObject"){
             // console.log("hello");
@@ -126,33 +137,7 @@ function injectHelpers(array, start){
     newArray = removeEmptyIndices(newArray);
     return newArray;
 }
-
-// function displayTests(newTest){
-//   var lessonPage = document.getElementById("lessonPage");
-//   lessonPage.appendChild(function(){
-//     var newSection = document.createElement("section");
-//     newSection.innerHTML = "<h1>"+newTest.title+"</h1>";
-//     return newSection;
-//   }());
-//     for( let i in newTest.returnQuestionSet()){
-//       // console.log(newTest.returnQuestionSet()[i]);
-//       let newQuestion = newTest.returnQuestionSet()[i];
-//       // console.log($("#test-display"));
-//       lessonPage.appendChild(function(){
-//         let number = Number(i) + 1; //why not just i+1????
-//         let data = {
-//           questionTitle : `${number}) ` + newQuestion.title,
-//           questionText : newQuestion.text,
-//           example : newQuestion.example,
-//           ID: `test-num-${i}`,
-//           classList : []
-//         }
-//         return (new Section(data)).returnNewDomElement();
-//       }());
-//     }
-// }
-
-  function makeConsoleTester(logs){ //please remake this
+function makeConsoleTester(logs){ //please remake this
     if(logs.length === 0){
       return ``
     }
@@ -168,27 +153,47 @@ function injectHelpers(array, start){
     }
     `
   }
+  function searchFramesForVariable(variableName, value, startingFrame, frameName){
+    if(
+      startingFrame.findVariable(variableName) && //we need to check if the variable exists (otherwise the next check will error)
+      startingFrame.findVariable(variableName).value === value && //if it does exist we need to check that the values matches
+      frameName === startingFrame.name)  // and we need to check if the frameNames match
+    {
+      return true;
+    }
+    for(child of startingFrame.childrenFrame){ //If we didn't find it in this frame, check all its children recursively
+      if(searchFramesForVariable(variableName, value, child, frameName)){
+        return true;
+      }
+    }
+    return false;
+  }
   
-  function makeVariableTester(vars){ //and this
-    logDup("vars", vars);
+  function makeVariableTester(vars){
     if(vars.length === 0){
       return ``
     }
     return `
-    // var vars = ${JSON.stringify(vars)};
-    // for(variable of vars){
-    //   let newFrame = findVariable(variable);
-
-    // }
+    var vars = ${JSON.stringify(vars)};
+    for(variable of vars){
+      try{
+        if(variable.scopeName === undefined){
+          if(JSON.stringify(eval(variable.name)) !== JSON.stringify(variable.val)){
+            failedTests.push(variable);
+          }
+        }else{
+          if(searchFramesForVariable(variable.name, variable.val, currentFrame, variable.scopeName) === false){
+            failedTests.push(variable);
+          };
+        }
+      }catch{
+        failedTests.push(variable);
+      }
+    }
     `
   }
-  // function findVariable(data){
-  //   var 
-  // }
-  function findScope(scopeName){
-    var newArray = [];
-    
-  }  
+   
+  
   function makeFunctionTester(functs){
     if(functs.length === 0){
       return ``;

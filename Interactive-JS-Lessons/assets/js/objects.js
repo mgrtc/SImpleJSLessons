@@ -156,11 +156,7 @@ class Frame {
     }
   }
   findVariable(variableName, scope){
-    if(this.name !== "default"){
-      return "error: ";
-    }else{
-
-    }
+    return this.variables.get(variableName);
   }
 
 }
