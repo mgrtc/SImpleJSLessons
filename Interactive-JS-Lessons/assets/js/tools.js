@@ -19,7 +19,9 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
             for(string of inputs){
-              newArray.push(`currentFrame.addVariable("var", "${string}", ${string});`); //all javascript inputs are var's
+              if(string !== ""){
+                newArray.push(`currentFrame.addVariable("var", "${string}", ${string});`); //all javascript inputs are var's
+              }
             }
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
@@ -144,7 +146,6 @@ function makeConsoleTester(logs){ //please remake this
     return `
     var logs = ${JSON.stringify(logs)};
     for(log of logs){
-    //   logDup("W-logs:", logs, "S-logs:", storedLogs,  "log:", log, "found:", storedLogs.indexOf(log.toString()) === -1 );
       if(storedLogs.indexOf(log) === -1 ){
         failedTests.push(log);
       }else{
@@ -169,56 +170,57 @@ function makeConsoleTester(logs){ //please remake this
     return false;
   }
   
-  function makeVariableTester(vars){
-    if(vars.length === 0){
-      return ``
-    }
-    return `
-    var vars = ${JSON.stringify(vars)};
-    for(variable of vars){
-      try{
-        if(variable.scopeName === undefined){
-          if(JSON.stringify(eval(variable.name)) !== JSON.stringify(variable.val)){
-            failedTests.push(variable);
-          }
-        }else{
-          if(searchFramesForVariable(variable.name, variable.val, currentFrame, variable.scopeName) === false){
-            failedTests.push(variable);
-          };
-        }
-      }catch{
-        failedTests.push(variable);
-      }
-    }
-    `
+function makeVariableTester(vars){
+  if(vars.length === 0){
+    return ``
   }
+  return `
+  var vars = ${JSON.stringify(vars)};
+  for(variable of vars){
+    try{
+      if(variable.scopeName === undefined){
+        if(JSON.stringify(eval(variable.name)) !== JSON.stringify(variable.val)){
+          failedTests.push(variable);
+        }
+      }else{
+        if(searchFramesForVariable(variable.name, variable.val, currentFrame, variable.scopeName) === false){
+          failedTests.push(variable);
+          logToPage("Unable to find or match variable " + variable.name);
+        };
+      }
+    }catch{
+      failedTests.push(variable);
+    }
+  }
+  `
+}
    
   
-  function makeFunctionTester(functs){
-    if(functs.length === 0){
-      return ``;
-    }else{
-      var newArray = new Array();
-      for(funct of functs){
-        var name = funct.name;
-        for(test of funct.tests){
-          var fnCall = name + "(" + test.input +")";
-          newArray.push(`
-          try{
-            var x = ${fnCall};
-            if(x !== ${test.output}){
-              failedTests.push(${JSON.stringify(fnCall)});
-              console.log("in function : ${name}, your output: ", x, "expected output: ${test.output}");
-              return;
-            }
-          }catch{
+function makeFunctionTester(functs){
+  if(functs.length === 0){
+    return ``;
+  }else{
+    var newArray = new Array();
+    for(funct of functs){
+      var name = funct.name;
+      for(test of funct.tests){
+        var fnCall = name + "(" + test.input +")";
+        newArray.push(`
+        try{
+          var x = ${fnCall};
+          if(x !== ${test.output}){
             failedTests.push(${JSON.stringify(fnCall)});
-            console.log("error : function ${name} not found");
+            console.log("in function : ${name}, your output: ", x, "expected output: ${test.output}");
             return;
           }
-          `);
+        }catch{
+          failedTests.push(${JSON.stringify(fnCall)});
+          console.log("error : function ${name} not found");
+          return;
         }
+        `);
       }
-      return newArray.join("\n");
     }
+    return newArray.join("\n");
   }
+}

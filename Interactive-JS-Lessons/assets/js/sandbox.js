@@ -1,16 +1,16 @@
 var newClock = new Clock();
 var editor;
 var newTest;
-
+var labID = function(){
+  try{
+      var number = Number((window.location.href).split('?')[1].split('=')[1]);
+  }catch(error){
+      return 8576937444577709;
+  }
+  return number;
+};
 function fetchData(newLabID){
-  var data = {labID: newLabID || function(){
-    try{
-        var number = Number((window.location.href).split('?')[1].split('=')[1]);
-    }catch(error){
-        return 8576937444577709;
-    }
-    return number;
-  }()};
+  var data = {labID: newLabID || labID()};
   var options = {
     method: 'POST',
     headers: {
@@ -111,7 +111,6 @@ function runCurrentTest(newTest){
   try{ //"just wrap it in a try catch"
     Function(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
   }catch{
-    console.log("execution error...");
     logToPage("execution error...");
     failedTests.push("execution error...");
   }
@@ -126,8 +125,8 @@ function runCurrentTest(newTest){
   // Clean up changes to console.log
   //********************************
   if(failedTests.length === 0){
-  $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
-  newTest.nextQuestion();  
+    $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
+    newTest.nextQuestion();  
   }
   console.log("ft",failedTests);
 }

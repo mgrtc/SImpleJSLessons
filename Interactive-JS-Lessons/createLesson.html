@@ -26,6 +26,13 @@
     <link rel="stylesheet" href="css/myCodeEditorTheme.css">
 </head>
 <style>
+.CodeMirror {
+border-radius: 10px;
+border-top-left-radius: 0px;
+}
+.activeTab {
+    background-color: rgb(170, 167, 181);
+}
 </style>
 <body>
     <nav id ="navBar" class="navbar navbar-dark navbar-expand-md" style="background: rgb(61, 61, 61);color: rgb(224,224,224);padding: 15px;">
@@ -36,7 +43,7 @@
                     <li class="nav-item"></li>
                     <li class="nav-item"></li>
                 </ul>
-            </div><input class="form-control-sm" type="search" style="margin-left: 0px; border-radius: 10px; border-style: none;" placeholder="Search ie : 305502808432711">
+            </div><input class="form-control-sm" type="search" style="margin-left: 0px; margin-top: 1px; border-radius: 10px; border-style: none;" placeholder="Search ie : 305502808432711">
             <button class="btn btn-primary btn-sm" type="button" style="margin-left: 10px;border-radius: 10px;height: 31px;">Search</button>
             <button data-bs-target="#navcol-1" data-bs-toggle="collapse" class="navbar-toggler"><span class="visually-hidden">Toggle navigation</span><span class="navbar-dark navbar-toggler-icon"></span></button>
         </div>
@@ -59,27 +66,26 @@
                                 <div class="col">
                                     <div class="row">
                                         <div class="col">
-                                            <p class="text-start">Function Tests</p>
+                                            <div id="functionTestTabsContainer">
+                                                <span id="tabsContainer">
+                                                <!-- <div id="ftest1" class="functionTestTab left">convertFtoC</div> -->
+                                                <!-- <div id="ftest2" class="functionTestTab">convertFtoC</div>
+                                                <div id="ftest3" class="functionTestTab">convertFtoC</div>
+                                                <div id="ftest4" class="functionTestTab">convertFtoC</div> -->
+                                                </span>
+                                                <input id="functNameInput" class="form-control form-control-sm right left" type="text" style="border-style: none;" placeholder="function name">
+                                                <div id="addFntest" onclick="createNewFNTest(function(){
+                                                    return document.getElementById(`functNameInput`).value;
+                                                }())">&nbsp+</div>
+                                            </div>
+                                            <div id="functionListPanel">
+                                                <div id="codeEditor" class="form-control form-control-sm" style="position: relative; padding:0px; border-radius: 8px;border-style: none; height: 393px;" spellcheck="true"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row" style="border-style: none;">
-                                        <div class="col">
-                                            <ul id = "functionTestList" class="list-group" style="border-radius: 8px;">
-                                                <li class="list-group-item">Dapibus ac facilisis in</li>
-                                                <li class="list-group-item">Dapibus ac facilisis in</li>
-                                                <li class="list-group-item">
-                                                    <button id="submitNewFunctionbtn" type="button" class="btn-sm btn-dark">Add</button>
-                                                </li>
-                                              </ul>
-                                        </div>
-                                        <div class="col">
-                                            <textarea class="form-control form-control-sm" style="border-radius: 8px;border-style: none;height: 120px;margin-top: 0px;" spellcheck="true" placeholder="Examples"></textarea></form>
-                                        </div>
-                                    </div>
-                                    <p class="text-start">Variable Tests</p>
                                 </div>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-md-6">
                                     <div class="list-group" id="list-tab" role="tablist">
                                         <a class="list-group-item list-group-item-action " id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>
@@ -96,27 +102,18 @@
                                         <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">c</div>
                                       </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <p class="text-start">Console Tests</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col"></div>
-                        <div class="col"></div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="row">
-                        <div id="functionTestTabsContainer">
+                        <!-- <div id="functionTestTabsContainer">
                             <span id="tabsContainer">
-                            <!-- <div id="ftest1" class="functionTestTab left">convertFtoC</div> -->
-                            <!-- <div id="ftest2" class="functionTestTab">convertFtoC</div>
+                            <div id="ftest1" class="functionTestTab left">convertFtoC</div>
+                            <div id="ftest2" class="functionTestTab">convertFtoC</div>
                             <div id="ftest3" class="functionTestTab">convertFtoC</div>
-                            <div id="ftest4" class="functionTestTab">convertFtoC</div> -->
+                            <div id="ftest4" class="functionTestTab">convertFtoC</div>
                             </span>
                             <input id="functNameInput" class="form-control form-control-sm right" type="text" style="border-style: none;" placeholder="function name">
                             <div id="addFntest" onclick="createNewFNTest(function(){
@@ -125,7 +122,7 @@
                         </div>
                         <div id="functionListPanel">
                             <div id="codeEditor" class="form-control form-control-sm" style="padding:0px; border-radius: 8px;border-style: none;height: 300px;" spellcheck="true"></div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -143,32 +140,27 @@
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-<script type="text/babel" src="assets/js/questionTemplates.jsx"></script>
+<script type = "text/babel" src="assets/js/questionTemplates.jsx"></script>
 <script>
 var editor = null;
+var functionMaps = new Map();
+var activeFunctiontestTab = "fntest-0";
 window.onload = function() {
     editor = CodeMirror(document.querySelector('#codeEditor'), {
     lineNumbers: true,
     firstLineNumber: 0,
     tabSize: 2,
-    value: function(){
-        document.getElementById("codeEditor").addEventListener("keyup", function(){
-            localStorage.setItem("textArea", editor.getValue());
-        });
-            if(localStorage.getItem("textArea")){
-            return localStorage.getItem("textArea");
-        }else{
-            localStorage.setItem("textArea", `//your code here`);
-            return localStorage.getItem("textArea");
-        }
-    }(),
-        theme: "myCodeEditorTheme",
-        continueComments: "Enter",
-        mode: 'javascript',
-        lineWrapping: true,
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        extraKeys: {"Ctrl-Q": "toggleComment"},
+    value: '//your function here',
+    theme: "myCodeEditorTheme",
+    continueComments: "Enter",
+    mode: 'javascript',
+    lineWrapping: true,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    extraKeys: {"Ctrl-Q": "toggleComment"},
+    });
+    document.getElementById("codeEditor").addEventListener("keyup", function(e){
+        functionMaps.set(activeFunctiontestTab, editor.getValue());
     });
 }
 // $('#list-tab a').on('click', function (e) {
@@ -180,6 +172,13 @@ window.onload = function() {
 function createNewFNTest(name){
     console.log(name);
     var element = createNewFNtab(name);
+}
+function setActiveFunctionsTab(activeTab){
+    var elements = document.getElementsByClassName("functionTestTab");
+    for(element of elements){
+        element.classList.remove("activeTab");
+    }
+    document.getElementById(activeTab).classList.add("activeTab");
 }
 </script>
 <script>
