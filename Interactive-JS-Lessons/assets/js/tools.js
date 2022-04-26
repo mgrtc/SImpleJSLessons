@@ -92,9 +92,9 @@ function injectHelpers(array, start){
           // var logString = array[i].match(/(?<=\()(.+)(?=\))/)[0];
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
           // console.log("logstring is", logString);
-          var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+          var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
           newArray.push(`{
-            let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["]/g, '');
+            let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
             logToPage(logString);
             storeLogs(logString);
           }`);
