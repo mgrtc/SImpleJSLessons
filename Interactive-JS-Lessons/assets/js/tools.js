@@ -125,10 +125,15 @@ currentFrame.addConsoleLogs(logString)
             newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
           }
-          else if(newStack.peek().match(/{/g) || newStack.peek() === "ifelse"){
+          else if(newStack.peek().match(/{/g)){
             newArray.push(array[i]);
             newStack.pop();
-          }else if(newStack.peek() === "blockscope"){
+          }else if(newStack.peek() === "ifelse"){
+            newArray.push('currentFrame = currentFrame.previousFrame;');
+            newArray.push(array[i]);
+            newStack.pop();
+          }
+          else if(newStack.peek() === "blockscope"){
             newArray.push('currentFrame = currentFrame.previousFrame;');
             newArray.push(array[i]);
             newStack.pop();
