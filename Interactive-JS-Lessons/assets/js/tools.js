@@ -22,8 +22,6 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newArray.push(`
             frameStack.push(currentFrame);
-            currentFrame = returnFrameContainingFunctionDEF(currentFrame, "${functionName}");
-            currentFrame = currentFrame.declaredFunctions.get("${functionName}");
             currentFrame = new Frame(currentFrame, "${functionName}", "scoped");`);
             for(string of inputs){
               if(string !== ""){
@@ -62,7 +60,7 @@ function injectHelpers(array, start){
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
-            newArray.push("currentFrame = currentFrame.returnPreviousFunctionScope();")
+            newArray.push("currentFrame = frameStack.pop() || currentFrame.returnPreviousFunctionScope();")
             newArray.push(array[i]);
             // i++;
             // newArray.push(array[i]);

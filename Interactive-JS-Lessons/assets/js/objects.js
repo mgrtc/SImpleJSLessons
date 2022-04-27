@@ -136,6 +136,9 @@ class Frame { //SHOULD PROBABLY ABSTRACT
     else{
       this.name = newName;
       this.type = type;
+      currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);
+      // console.log("currentframe", currentFrame.declaredFunctions.get(newName));
+      currentFrame = currentFrame.declaredFunctions.get(newName);
       currentFrame.childrenFrame.push(this);
       this.previousFrame = currentFrame;
     }
