@@ -64,15 +64,45 @@ function injectHelpers(array, start){
         } 
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          variablesInjecters({tokenArray : array, index: i, currentArray : newArray, stack : newStack, name : variableName, type : "var"});
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+            newArray.push(array[i]);
+            i++;
+            newArray.push(array[i]);  
+            newStack.push(variableName);
+            newStack.push("var");
+            newStack.push("anonFunctionOrObject");
+            continue;
+          }
+          newArray.push(array[i]);
+          newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            variablesInjecters({tokenArray : array, index: i, currentArray : newArray,stack : newStack,name : variableName, type : "let"});
+            if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+              newArray.push(array[i]);
+              i++;
+              newArray.push(array[i]);  
+              newStack.push(variableName);
+              newStack.push("let");
+              newStack.push("anonFunctionOrObject");
+              continue;
+            }
+            newArray.push(array[i]);
+            newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^const)+([ ]+)/)){
           var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          variablesInjecters({tokenArray : array, index: i, currentArray : newArray,stack : newStack,name : variableName, type : "const"});
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+            newArray.push(array[i]);
+            i++;
+            newArray.push(array[i]);  
+            newStack.push(variableName);
+            newStack.push("const");
+            newStack.push("anonFunctionOrObject");
+            continue;
+          }
+          newArray.push(array[i]);
+          newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
       }
       else if(detectStatementVariableReassignment(array[i])){
           var variableName = array[i].split(/=/)[0].trim();  
@@ -136,11 +166,12 @@ currentFrame.addConsoleLogs(logString)
           }
         }
         else if(array[i].match(/{/)){
-          newArray.push(array[i]);
           if(newStack.peek() !== ("anonFunctionOrObject" && "variableRedeclaration")){ //i learned a new syntax today
+            newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "genericBlock", "blocked");`);
             newStack.push("blockscope");
           }else{
+            newArray.push(array[i]);
             newStack.push("{");
           }
         }
@@ -161,17 +192,6 @@ function variablesInjecters(data){
   let variableName = data.name;
   let variableType = data.type;
 
-  if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-    newArray.push(array[i]);
-    i++;
-    newArray.push(array[i]);
-    newStack.push(variableName);
-    newStack.push(variableType);
-    newStack.push("anonFunctionOrObject");
-    return;
-  }
-  newArray.push(array[i]);
-  newArray.push(`currentFrame.addVariable("${variableType}", "${variableName}", ${variableName});`);
 }
 function makeConsoleTester(logs){ //please remake this
     if(logs.length === 0){
