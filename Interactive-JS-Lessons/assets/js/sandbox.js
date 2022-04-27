@@ -126,7 +126,10 @@ function runCurrentTest(newTest){
   //********************************
   if(failedTests.length === 0){
     $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
+    logToPage("you passed!");
     newTest.nextQuestion();  
+  }else{
+    logToPage("you failed!");
   }
   console.log("ft",failedTests);
 }
@@ -135,6 +138,7 @@ function generateInjection(newTest){
   //here, you inject any lines of code you want
   newArray.push(`
   var currentFrame = new Frame();
+  var frameStack = new Stack();
   `);
 
   //begin parsing of code in code editor;
@@ -148,6 +152,7 @@ function generateInjection(newTest){
   newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
   newArray.push("})()");
   newArray.push(`
+  console.log("currentFrame", currentFrame);
   currentFrame = currentFrame.returnDefaultFrame();
   window.currentFrame = currentFrame;
   console.log(window.currentFrame);

@@ -20,7 +20,11 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
-            newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
+            newArray.push(`
+            frameStack.push(currentFrame);
+            currentFrame = returnFrameContainingFunctionDEF(currentFrame, "${functionName}");
+            currentFrame = currentFrame.declaredFunctions.get("${functionName}");
+            currentFrame = new Frame(currentFrame, "${functionName}", "scoped");`);
             for(string of inputs){
               if(string !== ""){
                 newArray.push(`currentFrame.addVariable("var", "${string}", ${string});`); //all javascript inputs are var's
@@ -34,45 +38,15 @@ function injectHelpers(array, start){
         }  
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-            newArray.push(array[i]);
-            i++;
-            newArray.push(array[i]);
-            newStack.push(variableName);
-            newStack.push("var");
-            newStack.push("anonFunctionOrObject");
-            continue;
-          }
-          newArray.push(array[i]);
-          newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
+          variablesInjecters({tokenArray : array, index: i, currentArray : newArray, stack : newStack, name : variableName, type : "var"});
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
-              newArray.push(array[i]);
-              i++;
-              newArray.push(array[i]);
-              newStack.push(variableName);
-              newStack.push("let");
-              newStack.push("anonFunctionOrObject");
-              continue;
-            }
-            newArray.push(array[i]);
-            newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
+            variablesInjecters({tokenArray : array, index: i, currentArray : newArray,stack : newStack,name : variableName, type : "let"});
         }
         else if(array[i].match(/(^const)+([ ]+)/)){
           var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
-            newArray.push(array[i]);
-            i++;
-            newArray.push(array[i]);
-            newStack.push(variableName);
-            newStack.push("const");
-            newStack.push("anonFunctionOrObject");
-            continue;
-          }
-          newArray.push(array[i]);
-          newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
+          variablesInjecters({tokenArray : array, index: i, currentArray : newArray,stack : newStack,name : variableName, type : "const"});
       }
       else if(detectStatementVariableReassignment(array[i])){
           var variableName = array[i].split(/=/)[0].trim();  
@@ -88,7 +62,7 @@ function injectHelpers(array, start){
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
-            newArray.push("currentFrame = currentFrame.returnParentFrame();")
+            newArray.push("currentFrame = currentFrame.returnPreviousFunctionScope();")
             newArray.push(array[i]);
             // i++;
             // newArray.push(array[i]);
@@ -115,7 +89,7 @@ currentFrame.addConsoleLogs(logString)
             newArray.push(`currentFrame.addVariable("${type}", "${name}", ${name});`);
           }
           else if(newStack.peek() === "function"){
-            newArray.push("currentFrame = currentFrame.returnParentFrame();")
+            newArray.push("currentFrame = frameStack.pop();");
             newArray.push(array[i]);
             newStack.pop();
           }
@@ -142,7 +116,7 @@ currentFrame.addConsoleLogs(logString)
         else if(array[i].match(/{/)){
           newArray.push(array[i]);
           if(newStack.peek() !== ("anonFunctionOrObject" && "variableRedeclaration")){ //i learned a new syntax today
-            newArray.push(`currentFrame = new Frame(currentFrame);`);
+            newArray.push(`currentFrame = new Frame(currentFrame, "defaultblockname", "blocked");`);
             newStack.push("blockscope");
           }else{
             newStack.push("{");
@@ -156,6 +130,26 @@ currentFrame.addConsoleLogs(logString)
     newArray = trimStringInArray(newArray);
     newArray = removeEmptyIndices(newArray);
     return newArray;
+}
+function variablesInjecters(data){
+  let array = data.tokenArray;
+  let i = data.index;
+  let newArray = data.currentArray;
+  let newStack = data.stack;
+  let variableName = data.name;
+  let variableType = data.type;
+
+  if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+    newArray.push(array[i]);
+    i++;
+    newArray.push(array[i]);
+    newStack.push(variableName);
+    newStack.push(variableType);
+    newStack.push("anonFunctionOrObject");
+    return;
+  }
+  newArray.push(array[i]);
+  newArray.push(`currentFrame.addVariable("${variableType}", "${variableName}", ${variableName});`);
 }
 function makeConsoleTester(logs){ //please remake this
     if(logs.length === 0){

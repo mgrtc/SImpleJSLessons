@@ -108,34 +108,34 @@ function returnFrameContainingFunctionDEF(newFrame, functionName){
   }
   return newFrame;
 }
-class Frame {
-  name; //ie convertFtoC or "default"
-  declaredFunctions;
+class Frame { //SHOULD PROBABLY ABSTRACT
+  name; //ie convertFtoC or "default", "if", "else", "while", "for" etc....
+  type; //blocked or function scoped? "blocked" "scoped"
+  declaredFunctions; //blocks share the same pool of functions in its parent scope, and any functions declared within them gets hoisted to the next function or global scope => 2
   variables;
   consoleLogs;
   previousFrame;
-  childrenFrame;
+  childrenFrame; //2 => however, a function that gets called gets attacted to the block or function it was declared inside. so that means a block frame can a function scoped children frame
   blockFrames;
-  type; //is it a block frame or a function scope?
   counter;
-  constructor(currentFrame, newName){
+  constructor(currentFrame, newName, type){
     this.variables = new Map();
     this.childrenFrame = new Array();
     this.blockFrames = new Array();
     this.declaredFunctions = new Map(); //{functionName, [reference to declaration]}
     this.consoleLogs = new Array(); //(expression), results
-    if(typeof(newName) === "undefined" && typeof(currentFrame) === "undefined"){
+    if(typeof(currentFrame) === "undefined"){
       this.name = "default";
-    }else if(typeof(newName) === "undefined" && currentFrame){
-      this.name = "block";
+      this.type = "scoped";
+    }else if(type === "blocked"){
+      this.name = newName;
+      this.type = type;
       this.previousFrame = currentFrame;
       currentFrame.blockFrames.push(this);
     }
     else{
       this.name = newName;
-      currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);
-      // console.log("currentframe", currentFrame.declaredFunctions.get(newName));
-      currentFrame = currentFrame.declaredFunctions.get(newName);
+      this.type = type;
       currentFrame.childrenFrame.push(this);
       this.previousFrame = currentFrame;
     }
@@ -151,9 +151,9 @@ class Frame {
     if(typeof(this.previousFrame) === "undefined"){
       return this;
     }
-    if(this.name === "block"){
+    if(this.type === "blocked"){
       var newFrame = this;
-      while(newFrame.name === "block"){
+      while(newFrame.type === "blocked"){
         newFrame = newFrame.previousFrame;
         if(newFrame.name === "default"){
           return newFrame;
@@ -165,7 +165,7 @@ class Frame {
   }
   returnPreviousFunctionScope(){
     let newFrame = this;
-    while(newFrame.name === "block"){
+    while(newFrame.type === "blocked" && typeof(newFrame.previousFrame) !== "undefined"){
       newFrame = newFrame.previousFrame;
     }
     return newFrame;
@@ -173,7 +173,7 @@ class Frame {
   addVariable(type, name, value){
     if(type === "var"){
       var newFrame = this;
-      while(newFrame.name === "block"){
+      while(newFrame.type === "blocked"){
         newFrame = newFrame.previousFrame;
       }
       newFrame.variables.set(name, new Variable(type, name, value));
