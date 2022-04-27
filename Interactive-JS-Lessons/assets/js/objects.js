@@ -112,18 +112,30 @@ class Frame {
   name; //ie convertFtoC or "default"
   declaredFunctions;
   variables;
+  consoleLogs;
   previousFrame;
   childrenFrame;
   blockFrames;
+  type; //is it a block frame or a function scope?
+  counter;
   constructor(currentFrame, newName){
     this.variables = new Map();
     this.childrenFrame = new Array();
-    this.declaredFunctions = new Map();
-    if(typeof(newName) === "undefined"){
+    this.blockFrames = new Array();
+    this.declaredFunctions = new Map(); //{functionName, [reference to declaration]}
+    this.consoleLogs = new Array(); //(expression), results
+    if(typeof(newName) === "undefined" && typeof(currentFrame) === "undefined"){
       this.name = "default";
-    }else{
+    }else if(typeof(newName) === "undefined" && currentFrame){
+      this.name = "block";
+      this.previousFrame = currentFrame;
+      currentFrame.blockFrames.push(this);
+    }
+    else{
       this.name = newName;
       currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);
+      // console.log("currentframe", currentFrame.declaredFunctions.get(newName));
+      currentFrame = currentFrame.declaredFunctions.get(newName);
       currentFrame.childrenFrame.push(this);
       this.previousFrame = currentFrame;
     }
@@ -139,10 +151,38 @@ class Frame {
     if(typeof(this.previousFrame) === "undefined"){
       return this;
     }
+    if(this.name === "block"){
+      var newFrame = this;
+      while(newFrame.name === "block"){
+        newFrame = newFrame.previousFrame;
+        if(newFrame.name === "default"){
+          return newFrame;
+        }
+      }
+      return newFrame.previousFrame;
+    }
     return this.previousFrame;
   }
+  returnPreviousFunctionScope(){
+    let newFrame = this;
+    while(newFrame.name === "block"){
+      newFrame = newFrame.previousFrame;
+    }
+    return newFrame;
+  }
   addVariable(type, name, value){
-    this.variables.set(name, new Variable(type, name, value));
+    if(type === "var"){
+      var newFrame = this;
+      while(newFrame.name === "block"){
+        newFrame = newFrame.previousFrame;
+      }
+      newFrame.variables.set(name, new Variable(type, name, value));
+    }else if(type === "const" || type === "let" || type === "default"){
+      this.variables.set(name, new Variable(type, name, value));
+    }
+  }
+  addConsoleLogs(results){
+    this.consoleLogs.push(results)
   }
   updateVariable(name, value){
     var newFrame = returnFrameContainingVariable(this, name);
@@ -160,6 +200,7 @@ class Frame {
   }
 
 }
+
 class Variable{
   type; //lets, or vars
   name; //variable name

@@ -13,7 +13,10 @@ function injectHelpers(array, start){
             var inputs = trimStringInArray(array[i].split("function ")[1].split(/[(|)]/)[1].split(","));
             // console.log("inputs: ", inputs);
             // console.log("functionName", functionName);
-            newArray.push(`currentFrame.declaredFunctions.set("${functionName}", true);`);
+            newArray.push(`{
+              let tempFrame = currentFrame.returnPreviousFunctionScope();
+              tempFrame.declaredFunctions.set("${functionName}", currentFrame);
+            }`);
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
@@ -31,7 +34,7 @@ function injectHelpers(array, start){
         }  
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(array[i+1].match(/[{]/)){ //tests if anon function is declared
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
@@ -45,7 +48,7 @@ function injectHelpers(array, start){
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            if(array[i+1].match(/[{]/)){
+            if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
               newArray.push(array[i]);
               i++;
               newArray.push(array[i]);
@@ -59,7 +62,7 @@ function injectHelpers(array, start){
         }
         else if(array[i].match(/(^const)+([ ]+)/)){
           var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(array[i+1].match(/[{]/)){
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
@@ -73,7 +76,7 @@ function injectHelpers(array, start){
       }
       else if(detectStatementVariableReassignment(array[i])){
           var variableName = array[i].split(/=/)[0].trim();  
-          if(array[i+1].match(/[{]/)){
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
               newArray.push(array[i]);
               i++;
               newArray.push(array[i]);
@@ -95,11 +98,12 @@ function injectHelpers(array, start){
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
           // console.log("logstring is", logString);
           var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
-          newArray.push(`{
-            let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
-            logToPage(logString);
-            storeLogs(logString);
-          }`);
+newArray.push(`{
+let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
+logToPage(logString);
+storeLogs(logString);
+currentFrame.addConsoleLogs(logString)
+}`);
         }  
         else if(array[i].match(/}/g)){
           if(newStack.peek() === "anonFunctionOrObject"){
@@ -124,11 +128,20 @@ function injectHelpers(array, start){
           else if(newStack.peek().match(/{/g) || newStack.peek() === "ifelse"){
             newArray.push(array[i]);
             newStack.pop();
+          }else if(newStack.peek() === "blockscope"){
+            newArray.push('currentFrame = currentFrame.previousFrame;');
+            newArray.push(array[i]);
+            newStack.pop();
           }
         }
         else if(array[i].match(/{/)){
           newArray.push(array[i]);
-          newStack.push("{");
+          if(newStack.peek() !== ("anonFunctionOrObject" && "variableRedeclaration")){ //i learned a new syntax today
+            newArray.push(`currentFrame = new Frame(currentFrame);`);
+            newStack.push("blockscope");
+          }else{
+            newStack.push("{");
+          }
         }
         else{
             newArray.push(array[i]);
