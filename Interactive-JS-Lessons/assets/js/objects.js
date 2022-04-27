@@ -108,6 +108,7 @@ function returnFrameContainingFunctionDEF(newFrame, functionName){
   }
   return newFrame;
 }
+var frameCounter;
 class Frame { //SHOULD PROBABLY ABSTRACT
   name; //ie convertFtoC or "default", "if", "else", "while", "for" etc....
   type; //blocked or function scoped? "blocked" "scoped"
@@ -127,13 +128,19 @@ class Frame { //SHOULD PROBABLY ABSTRACT
     if(typeof(currentFrame) === "undefined"){
       this.name = "default";
       this.type = "scoped";
+      this.counter = frameCounter = 0;
+      frameCounter++;
     }else if(type === "blocked"){
       this.name = newName;
       this.type = type;
+      this.counter = frameCounter;
+      frameCounter++;
       this.previousFrame = currentFrame;
       currentFrame.blockFrames.push(this);
     }
     else{
+      this.counter = frameCounter;
+      frameCounter++;
       this.name = newName;
       this.type = type;
       currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);

@@ -31,9 +31,37 @@ function injectHelpers(array, start){
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
-          newStack.push("ifelse");
+          newStack.push("blockscope");
           newArray.push(array[i]);
-        }  
+          if(array[i].match(/(^if)/)){
+            i++;
+            newArray.push(array[i]);
+            newArray.push(`currentFrame = new Frame(currentFrame, "ifBlock", "blocked");`);
+          }else{
+            i++;
+            newArray.push(array[i]);
+            newArray.push(`currentFrame = new Frame(currentFrame, "elseBlock", "blocked");`);
+          }
+        } 
+        else if((/(^for)/g).test(array[i])){
+          newStack.push("blockscope");
+          newArray.push(array[i]);
+          i++;
+          newArray.push(array[i]);
+          i++;
+          newArray.push(array[i]);
+          i++;
+          newArray.push(array[i]);
+          newArray.push(`currentFrame = new Frame(currentFrame, "forLoopBlock", "blocked");`);
+        } 
+
+        else if((/(^while)/g).test(array[i])){
+          newStack.push("blockscope");
+          newArray.push(array[i]);
+          i++;
+          newArray.push(array[i]);
+          newArray.push(`currentFrame = new Frame(currentFrame, "whileLoopBlock", "blocked");`);
+        } 
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
           variablesInjecters({tokenArray : array, index: i, currentArray : newArray, stack : newStack, name : variableName, type : "var"});
@@ -100,10 +128,6 @@ currentFrame.addConsoleLogs(logString)
           else if(newStack.peek().match(/{/g)){
             newArray.push(array[i]);
             newStack.pop();
-          }else if(newStack.peek() === "ifelse"){
-            newArray.push('currentFrame = currentFrame.previousFrame;');
-            newArray.push(array[i]);
-            newStack.pop();
           }
           else if(newStack.peek() === "blockscope"){
             newArray.push('currentFrame = currentFrame.previousFrame;');
@@ -114,7 +138,7 @@ currentFrame.addConsoleLogs(logString)
         else if(array[i].match(/{/)){
           newArray.push(array[i]);
           if(newStack.peek() !== ("anonFunctionOrObject" && "variableRedeclaration")){ //i learned a new syntax today
-            newArray.push(`currentFrame = new Frame(currentFrame, "defaultblockname", "blocked");`);
+            newArray.push(`currentFrame = new Frame(currentFrame, "genericBlock", "blocked");`);
             newStack.push("blockscope");
           }else{
             newStack.push("{");
