@@ -5,7 +5,7 @@ var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch(error){
-      return 2450942811227241;
+      return 1967824181792414;
   }
   return number;
 };
