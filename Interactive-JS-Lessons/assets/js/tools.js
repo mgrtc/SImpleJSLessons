@@ -126,14 +126,15 @@ function injectHelpers(array, start){
         else if(array[i].match(/(^console.log)/)){ 
           // var logString = array[i].match(/(?<=\()(.+)(?=\))/)[0];
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
-          logString = logString.slice(1, logString.length - 2);
+          logString = logString.split(";")[0];
+          logString = logString.slice(1, logString.length - 1);
           var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
-newArray.push(`{
-let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
-logToPage(logString);
-storeLogs(logString);
-currentFrame.addConsoleLogs(logString)
-}`);
+          newArray.push(`{
+          let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
+          logToPage(logString);
+          storeLogs(logString);
+          currentFrame.addConsoleLogs(logString)
+          }`);
         }  
         else if(array[i].match(/}/g)){
           if(newStack.peek() === "anonFunctionOrObject"){
@@ -200,6 +201,7 @@ function makeConsoleTester(logs){ //please remake this
     return `
     var logs = ${JSON.stringify(logs)};
     for(log of logs){
+      console.log("log test", log);
       if(storedLogs.indexOf(log) === -1 ){
         failedTests.push(log);
       }else{
@@ -233,7 +235,7 @@ function makeVariableTester(vars){
   for(variable of vars){
     try{
       if(variable.scopeName === undefined){
-        if(JSON.stringify(eval(variable.name)) !== JSON.stringify(variable.val)){
+        if(JSON.stringify(eval(variable.name)) != JSON.stringify(variable.val)){
           failedTests.push(variable);
         }
       }else{

@@ -5,10 +5,11 @@ var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch(error){
-      return 8576937444577709;
+      return 2450942811227241;
   }
   return number;
 };
+var currentLabID = labID();
 function fetchData(newLabID){
   var data = {labID: newLabID || labID()};
   var options = {
@@ -48,10 +49,15 @@ function init(newTest){
         document.getElementById("codeEditor").addEventListener("keyup", function(){
             localStorage.setItem("textArea", editor.getValue());
         });
+        if(localStorage.getItem(`${currentLabID}`)){
+          newTest.currentQuestion = localStorage.getItem(`${currentLabID}`);
+        }else{
+          localStorage.setItem(`${currentLabID}`, 0);
+        }
             if(localStorage.getItem("textArea")){
             return localStorage.getItem("textArea");
         }else{
-            localStorage.setItem("textArea", `//your code here`);
+            localStorage.setItem("textArea", newTest.returnCurrentQuestion().startingCode);
             return localStorage.getItem("textArea");
         }
     }(),
@@ -132,7 +138,9 @@ function runCurrentTest(newTest){
   if(failedTests.length === 0){
     $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
     logToPage("you passed!");
-    newTest.nextQuestion();  
+    newTest.nextQuestion();
+    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
+    
   }else{
     logToPage("you failed!");
   }

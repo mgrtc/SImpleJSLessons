@@ -9,7 +9,11 @@ window.onload = function(){
     fillVerticalHeight(element, elementOffSetter.offsetHeight + x + y);
     document.getElementById("searchButton").addEventListener("click", function(){
         var newLabID = document.getElementById("searchField").value;
-        window.location.href = "/Interactive-JS-Lessons/?labID=" + newLabID;
+        if(window.location.href.match("simplejsclasses")){
+            window.location.href = "/Interactive-JS-Lessons/?labID=" + newLabID;
+        }else{
+            window.location.href = "?labID=" + newLabID;
+        }
     });
     fetchData();
 }

@@ -22,6 +22,8 @@ class Test{
       return;
     }
     this.currentQuestion++;
+    editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
+    localStorage.setItem("textArea", editor.getValue());
   }
   returnCurrentQuestion(){
     return this.testQuestionSet[this.currentQuestion];
@@ -38,7 +40,7 @@ class Question{
   vars; //variables to be detected
   functs; //functions to be made, along with tests.
   //we got three types of questions so far, asking for console.logs; asking to create variables with specific values, function name and expected inputs/outputs
-
+  startingCode;
   constructor(data){
     this.text = data.text;
     this.logs = data.logs;
@@ -46,6 +48,7 @@ class Question{
     this.functs = data.functs;
     this.title = data.title;
     this.example = data.example;
+    this.startingCode = data.startingCode;
   }
   returnText(){
     return this.text;
@@ -247,6 +250,9 @@ class Stack {
   pop(){
     var newData = this.newStack[this.top];
     this.top--;
+    if(this.top < -1){ //prevent the marker from going out of bounds
+      this.top = -1;
+    }
     return newData;
   }
   peek(){

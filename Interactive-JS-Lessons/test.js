@@ -69,4 +69,4 @@ example();
 currentFrame = currentFrame.returnDefaultFrame();
 window.currentFrame = currentFrame;
 console.log(window.currentFrame);
-  // logDup(typeof("currentFrame", currentFrame.variables.get("x").value));
+// logDup(typeof("currentFrame", currentFrame.variables.get("x").value));
