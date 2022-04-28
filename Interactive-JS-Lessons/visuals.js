@@ -32,7 +32,7 @@ function addTimeBreaks(inputString){
       outputArray.push(`await timeBreak(${i}, currentFrame.returnDefaultFrame());`)
       outputArray.push(inputArray[i]);
     }
-    outputArray.push(`highlight(null, window.highlightedLineNum)`);
+    outputArray.push(`await timeBreak(${null}, currentFrame.returnDefaultFrame());`)
     return outputArray.join("\n");
 }
 
