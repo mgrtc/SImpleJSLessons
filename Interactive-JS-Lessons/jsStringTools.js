@@ -1,9 +1,11 @@
-
 function breakIntoComponents(inputString) {
     //this needs more work
     //first, we must first remove all line breaks and whitespace. we also assume that user writes javascript with the use of semi colons...
     //inputString = inputString.replace(/\n/g, " ");
+    // console.log(inputString);
+    inputString = addTimeBreaks(inputString);
     inputString = inputString.split(/([;||\n])/g);
+    // console.log(inputString);
     inputString = trimStringInArray(inputString);
     inputString = removeEmptyIndices(inputString);
     // console.log(inputString);

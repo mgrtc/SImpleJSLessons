@@ -5,31 +5,66 @@ function injectHelpers(array, start){
         start = 0;
     }
     for(i = start; i < array.length; i++){ //this is bound to cause bugs later on.
-        if(array[i].match(/(^function)+([ ]+)/)){ 
+        if(array[i].match(/(^function)+([ ]+)/)){  //function decelerations
+            console.log("hi", array[i]);
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
             var functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];
-            var args = removeEmptyIndices(functionName)[1].match(/(?<=\()(.+)(?=\))/); //this gets the names of all the arguments being passed into a function
-            if(args !== null){
-              args = args[0].split(",");
-            }
+            // var args = removeEmptyIndices(functionName)[1].match(/(?<=\()(.+)(?=\))/); //this gets the names of all the arguments being passed into a function
+            // if(args !== null){
+            //   args = args[0].split(",");
+            // }
             newArray.push(`currentFrame.declaredFunctions.set("${functionName}", true);`);
-            newArray.push(array[i]);
+            newArray.push("async "+array[i]);
             i++;
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
-        else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
+        else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ //ifelse's
           newStack.push("ifelse");
           newArray.push(array[i]);
         }  
-        else if(array[i].match(/(^var)+([ ]+)/)){
+        else if(array[i].match(/(=)+(\s*)\bfunction/)){ //anonymous function decelerations
+          // newArray.push(array[i]);
+          var deceleration = array[i].split(/[=]/)[0].split(/\s/);
+          var arguments = array[i].split(/[=]/)[1].split(/\(/)[1].split(/\)/)[0];
+          // console.log(deceleration, arguments);
+          if(deceleration.length === 3){
+            //This is a tagged variable deceleration with initial value of a function;
+            //It may be let, const, or var
+            var tag = deceleration[0];
+            var variableName = deceleration[1];
+          }
+          else if(deceleration.length === 2){
+            //This is an untagged variable being assigned a function
+            var tag = "";
+            var variableName = deceleration[0];
+          } else {
+            //This should never happen if people are writing valid code, but if it did, our code would error and I'd rather have a useful error
+            throw `you did something bad with a variable being set equal to a function near line ${i}`;
+          }
+          var functionName = `anon_${variableName}_${window.anonFunctionNumber}`
+          window.anonFunctionNumber += 1;
+          
+          newArray.push(`${tag} ${variableName} = ${functionName}`);
+          if(tag === ""){
+            newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
+          }else{
+            newArray.push(`currentFrame.addVariable("${tag}", "${variableName}", ${variableName});`);
+          }
+          newArray.push(`currentFrame.declaredFunctions.set("${functionName}", true);`);
+          newArray.push(`async function ${functionName}(${arguments})`);
+          i++;
+          newArray.push(array[i]);
+          newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
+        }
+        else if(array[i].match(/(^var)+([ ]+)/)){ //variable decelerations
             newArray.push(array[i]);
             var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
             newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
         }
-        else if(array[i].match(/(^let)+([ ]+)/)){
+        else if(array[i].match(/(^let)+([ ]+)/)){ 
             newArray.push(array[i]);
 
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];

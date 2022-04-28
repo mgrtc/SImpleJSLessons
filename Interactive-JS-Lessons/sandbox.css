@@ -1,6 +1,6 @@
 
 .column{
-    width: 37%;
+    width: 32%;
     float: left;
 }
 
@@ -25,4 +25,5 @@
 
 #test-display{
     width: 20%;
+    display: none;
 }

@@ -1,26 +1,12 @@
 var editor;
-const data = {labID: function(){
-  try{
-      var number = Number((window.location.href).split('?')[1].split('=')[1]);
-  }catch{
-      return 305502808432711;
-  }
-  return number;
-}()};
-const options = {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-}
-fetch('http://137.184.237.82:3000/requestLab', options).then((response) => response.json()).then((data) => {
-console.log(data);  
-var newTest = new Test(data);
-  init(newTest);
-});
-
 window.onload = function (){
+  const data = {"testQuestionSet":[
+    {"text":`run the jewels`,
+      "logs":[],"vars":[],"functs":[]
+    }]
+    ,"currentQuestion":0}  
+  var newTest = new Test(data);
+  init(newTest);
   var results = breakIntoComponents(localStorage.getItem("textArea"));
 }
 
@@ -61,7 +47,7 @@ var logToPage  = function(){
     }
   }
 };
-function runCurrentTest(newTest){
+async function runCurrentTest(newTest){
     //******************
     //hijack console.log
     //******************
@@ -85,26 +71,17 @@ function runCurrentTest(newTest){
     //**************
     //run user input
     //**************
+    window.anonFunctionNumber = 0; // this is used to make sure anonymous functions are uniquely identified
     window.failedTests = []; //very interesting
     var injection = generateInjection(newTest);
-    Function(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
-
-    //******************
-    //analyze user input
-    //******************
-
-    //Very important, because eval treats the frame it was called in as its code's global frame from here we can access the user's global variables and functions
-    //So any testing we'd want to do on a user's functions and variables will happen here
-
-    if(failedTests.length === 0){
-      $(`#test-num-${newTest.currentQuestion}`).css("background-color", "green");
-      newTest.nextQuestion();
-    }
-    console.log("failed tests",failedTests);
+    console.log(injection.join("\n"));
+    let AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+    await AsyncFunction(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
 }
 
 function generateInjection(newTest){
   var newArray = new Array();
+  newArray.push("(async function(){");
   //here, you inject any lines of code you want
   newArray.push(`
   var functionDeclared = new Map();
@@ -126,6 +103,11 @@ function generateInjection(newTest){
   newArray.push(`
   window.currentFrame = currentFrame.returnDefaultFrame();
   `);
+  newArray.push(`
+  console.log(window.currentFrame)
+  `);
+
+  newArray.push("})()");
   return newArray;
 }
 
