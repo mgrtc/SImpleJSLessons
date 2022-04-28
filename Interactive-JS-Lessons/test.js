@@ -28,7 +28,7 @@ var newTest = {
     let a = 0;
     console.log(a);
 }`,
-            startingCode: `Example: {
+            startingCode: `{
     let a = 0;
     //[console.log(a);]
 }
