@@ -1,18 +1,47 @@
-
+function splitBySemi(array){
+  let newArray = new Array();
+  for(string of array){
+    if(string.match(/[;]/g)){
+      let temp = string.split(/([;])/g);
+      for(substring of temp){
+        newArray.push(substring);
+      }
+    }else{
+      newArray.push(string);
+    }
+  }
+  return newArray;
+}
 function breakIntoComponents(inputString) {
     // console.log(inputString);
     //this needs more work
     //first, we must first remove all line breaks and whitespace. we also assume that user writes javascript with the use of semi colons...
     //inputString = inputString.replace(/\n/g, " ");
-    inputString = inputString.split(/([;||\n])/g);
+    // inputString = trimStringInArray(inputString.split("\n"));
+    // inputString = commentsCleanse(inputString);
+    inputString = inputString.split(/([\n])/g);
+    inputString = commentsCleanse(inputString);
+    inputString = splitBySemi(inputString);
     inputString = trimStringInArray(inputString);
     inputString = removeEmptyIndices(inputString);
-    // console.log(inputString);
     // inputString.match(/[^\;]+\;?|\;/g);
     var outputArray = splitByBrackets(inputString);
     outputArray = combineSemiColonsWithPreviousLines(outputArray);
     outputArray = injectHelpers(outputArray);
     return outputArray;
+  }
+  function commentsCleanse(array){
+    let newArray = new Array();
+    for(string of array){
+      if(string.match(/(?:\/\/)/)){
+        let cleansedString = string.split(/[/]+/)[0];
+        newArray.push(cleansedString);
+      }else{
+        newArray.push(string);
+      }
+    }
+    newArray = removeEmptyIndices(newArray);
+    return newArray;
   }
   function splitByBrackets(inputString){
     var outputArray = new Array();

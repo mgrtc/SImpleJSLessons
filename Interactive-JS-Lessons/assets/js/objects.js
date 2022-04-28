@@ -108,15 +108,26 @@ function returnFrameContainingFunctionDEF(newFrame, functionName){
   }
   return newFrame;
 }
+function searchFramesForFunctionDef(functionName, startingFrame){
+  if(startingFrame.declaredFunctions.get(functionName)){
+    return startingFrame.declaredFunctions.get(functionName);
+  }
+  for(child of startingFrame.childrenFrame){ //If we didn't find it in this frame, check all its children recursively
+    if(searchFramesForFunctionDef(functionName, child)){
+      return child;
+    }
+  }
+  return false;
+}
 var frameCounter;
 class Frame { //SHOULD PROBABLY ABSTRACT
   name; //ie convertFtoC or "default", "if", "else", "while", "for" etc....
   type; //blocked or function scoped? "blocked" "scoped"
-  declaredFunctions; //blocks share the same pool of functions in its parent scope, and any functions declared within them gets hoisted to the next function or global scope => 2
+  declaredFunctions; //blocks share the same pool of functions as its parent scope, and any functions declared within a block gets its declaration hoisted to the next function or global scope => 2
   variables;
   consoleLogs;
   previousFrame;
-  childrenFrame; //2 => however, a function that gets called gets attacted to the block or function it was declared inside. so that means a block frame can a function scoped children frame
+  childrenFrame; //2 => however, a function that gets called gets its scope attacted to the block or function it was declared inside. so that means a block frame can function scopes as a child frame
   blockFrames;
   counter;
   constructor(currentFrame, newName, type){
@@ -125,7 +136,7 @@ class Frame { //SHOULD PROBABLY ABSTRACT
     this.blockFrames = new Array();
     this.declaredFunctions = new Map(); //{functionName, [reference to declaration]}
     this.consoleLogs = new Array(); //(expression), results
-    if(typeof(currentFrame) === "undefined"){
+    if(typeof(newName) === "undefined"){
       this.name = "default";
       this.type = "scoped";
       this.counter = frameCounter = 0;
@@ -136,14 +147,14 @@ class Frame { //SHOULD PROBABLY ABSTRACT
       this.counter = frameCounter;
       frameCounter++;
       this.previousFrame = currentFrame;
-      currentFrame.blockFrames.push(this);
+      currentFrame.childrenFrame.push(this);
     }
     else{
       this.counter = frameCounter;
       frameCounter++;
       this.name = newName;
       this.type = type;
-      currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);
+      currentFrame = searchFramesForFunctionDef(newName, currentFrame.returnDefaultFrame());
       // console.log("currentframe", currentFrame.declaredFunctions.get(newName));
       currentFrame = currentFrame.declaredFunctions.get(newName);
       currentFrame.childrenFrame.push(this);

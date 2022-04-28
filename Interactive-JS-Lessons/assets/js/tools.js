@@ -126,7 +126,7 @@ function injectHelpers(array, start){
         else if(array[i].match(/(^console.log)/)){ 
           // var logString = array[i].match(/(?<=\()(.+)(?=\))/)[0];
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
-          // console.log("logstring is", logString);
+          logString = logString.slice(1, logString.length - 2);
           var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
 newArray.push(`{
 let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');

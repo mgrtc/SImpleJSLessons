@@ -15,8 +15,8 @@ const options = {
   body: JSON.stringify(data)
 }
 fetch('http://137.184.237.82:3000/requestLab', options).then((response) => response.json()).then((data) => {
-console.log(data);  
-var newTest = new Test(data);
+  console.log(data);  
+  var newTest = new Test(data);
   init(newTest);
 });
 

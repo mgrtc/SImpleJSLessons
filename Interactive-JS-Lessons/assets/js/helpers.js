@@ -1,5 +1,4 @@
 window.onload = function(){
-
     var element = document.getElementsByClassName("heightAdjustment");
     var elementOffSetter = document.getElementById("navBar");
     fillVerticalHeight(element, elementOffSetter.offsetHeight);

@@ -106,13 +106,18 @@ function runCurrentTest(newTest){
   //run user input
   //**************
   window.failedTests = []; //very interesting
-  var injection = generateInjection(newTest);
+  try{
+    var injection = generateInjection(newTest);
+  }catch(error){
+    logToPage(error);
+    return;
+  }
   console.log("injection", injection.join("\n"));
   try{ //"just wrap it in a try catch"
     Function(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
   }catch(error){
     logToPage(error);
-    failedTests.push("execution error...");
+    return;
   }
   //******************
   //analyze user input
@@ -152,7 +157,6 @@ function generateInjection(newTest){
   newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
   newArray.push("})()");
   newArray.push(`
-  console.log("currentFrame", currentFrame);
   currentFrame = currentFrame.returnDefaultFrame();
   window.currentFrame = currentFrame;
   console.log(window.currentFrame);
