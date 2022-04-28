@@ -5,7 +5,7 @@ var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch(error){
-      return 1967824181792414;
+      return 6019364360585092;
   }
   return number;
 };
@@ -54,10 +54,14 @@ function init(newTest){
         }else{
           localStorage.setItem(`${currentLabID}`, 0);
         }
-            if(localStorage.getItem("textArea")){
+        if(localStorage.getItem("textArea") && localStorage.getItem("textArea") !== "//your code here"){
             return localStorage.getItem("textArea");
         }else{
-            localStorage.setItem("textArea", newTest.returnCurrentQuestion().startingCode);
+            try{
+              localStorage.setItem("textArea", newTest.returnCurrentQuestion().startingCode);
+            }catch{
+              localStorage.setItem("textArea", "//your code here");
+            }
             return localStorage.getItem("textArea");
         }
     }(),

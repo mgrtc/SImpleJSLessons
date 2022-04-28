@@ -1,9 +1,11 @@
 class Test{
   title;
+  text;
   testQuestionSet;
   currentQuestion;
   constructor(data){
     this.title = data.title;
+    this.text = data.text;
     this.testQuestionSet = new Array();
     this.currentQuestion = 0;
     if(data){

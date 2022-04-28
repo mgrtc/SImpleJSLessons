@@ -6,7 +6,7 @@ function displayTests(newTest){
   var elements = new Array();
   elements.push(function(){
       return (
-        <section><h1>{newTest.title}</h1></section>
+        <section><h1>{newTest.title}</h1><p>{newTest.text}</p></section>
         );
     }());
 
