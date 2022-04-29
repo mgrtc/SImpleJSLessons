@@ -10,7 +10,7 @@ function displayTests(newTest){
         );
     }());
 
-  for( let i in newTest.returnQuestionSet()){
+  for(let i in newTest.returnQuestionSet()){
     let newQuestion = newTest.returnQuestionSet()[i];
     elements.push(function(){
       return (<section id={`test-num-${i}`} className={function(){

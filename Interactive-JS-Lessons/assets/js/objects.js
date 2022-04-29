@@ -41,16 +41,18 @@ class Question{
   logs;//array of console.logs to be detected 
   vars; //variables to be detected
   functs; //functions to be made, along with tests.
+  stringsTests;//stack of strings
   //we got three types of questions so far, asking for console.logs; asking to create variables with specific values, function name and expected inputs/outputs
   startingCode;
   constructor(data){
-    this.text = data.text;
-    this.logs = data.logs;
-    this.vars = data.vars;
-    this.functs = data.functs;
-    this.title = data.title;
-    this.example = data.example;
-    this.startingCode = data.startingCode;
+    this.text = data.text || "";
+    this.logs = data.logs || [];
+    this.vars = data.vars || [];
+    this.functs = data.functs || [];
+    this.stringsTests = data.stringTests || [];
+    this.title = data.title || "";
+    this.example = data.example || "";
+    this.startingCode = data.startingCode || "//your code here";
   }
   returnText(){
     return this.text;
@@ -124,6 +126,35 @@ function searchFramesForFunctionDef(functionName, startingFrame){
   }
   return false;
 }
+function searchFramesForVariable(variableName, value, type, startingFrame, frameName){
+  if(
+    startingFrame.variables.get(variableName) && //we need to check if the variable exists (otherwise the next check will error)
+    startingFrame.variables.get(variableName).value === value &&
+    startingFrame.variables.get(variableName).type === type && //if it does exist we need to check that the values matches
+    frameName === startingFrame.name
+    )  // and we need to check if the frameNames match
+    {
+    return true;
+  }
+  for(child of startingFrame.childrenFrame){ //If we didn't find it in this frame, check all its children recursively
+    if(searchFramesForVariable(variableName, value, type, child, frameName)){
+      return true;
+    }
+  }
+  return false;
+}
+function searchFramesForConsoleLogging(consoleString, frameName, startingFrame){
+  if(startingFrame.searchInConsoleLog(consoleString) && startingFrame.name === frameName){
+    startingFrame.consoleLogs[startingFrame.consoleLogs.indexOf(consoleString)] = null;
+    return true;
+  }
+  for(child of startingFrame.childrenFrame){
+    if(searchFramesForConsoleLogging(consoleString, frameName, child)){
+      return true;
+    }
+  }
+  return false;
+}
 var frameCounter;
 class Frame { //SHOULD PROBABLY ABSTRACT
   name; //ie convertFtoC or "default", "if", "else", "while", "for" etc....
@@ -165,6 +196,14 @@ class Frame { //SHOULD PROBABLY ABSTRACT
       currentFrame.childrenFrame.push(this);
       this.previousFrame = currentFrame;
     }
+  }
+  searchInConsoleLog(searchString){
+    for(let i = 0; i < this.consoleLogs.length; i++){
+      if(this.consoleLogs[i] == searchString){
+        return true;
+      }
+    }
+    return false;
   }
   returnDefaultFrame(){
     var newFrame = this;
@@ -241,18 +280,35 @@ class Variable{
 class Stack {
   top;
   newStack;
-  constructor(){
-    this.newStack = [];
-    this.top = -1;
+  constructor(data){
+    if(data){
+      this.newStack = data;
+      this.top = this.newStack.length-1;
+    }else{
+      this.newStack = [];
+      this.top = -1;
+    }
   }
   push(data){
     this.top++;
     this.newStack[this.top] = data;
   }
-  pop(){
-    var newData = this.newStack[this.top];
+  pop(index){
+    if(index === 0 || index){ 
+        do{
+          this.newStack[index] = this.newStack[index+1];
+          index++;
+          if(index === this.top){
+            this.newStack[index] = null;
+          }
+        }while(index < this.top)
+    }else{
+      var newData = this.newStack[this.top];
+      this.newStack[this.top] = null;
+    }
     this.top--;
-    if(this.top < -1){ //prevent the marker from going out of bounds
+
+    if(this.top < -1){ //prevent the marker from going out of bounds/overflow
       this.top = -1;
     }
     return newData;
@@ -261,8 +317,30 @@ class Stack {
     return this.newStack[this.top];
   }
   size(){
-    return this.top;
+    return this.top + 1;
   }
+  getIndexOfandPop(string){
+    if(this.top < 0){
+      return;
+    }
+    let index = function(newStack, top, string){
+      for(let i = 0; i <= top; i++){
+        if(cleanString(newStack[i]) == cleanString(string)){
+          return i;
+        }
+      }
+      return -1;
+    }(this.newStack, this.top, string);
+    if(index === -1){
+      return undefined;
+    }
+   this.pop(index);
+  }
+}
+function cleanString(string){
+  string = string.trim();
+  string = string.split(";")[0].trim();
+  return string;
 }
 //others
 class Clock{

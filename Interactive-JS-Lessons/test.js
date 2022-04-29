@@ -34,9 +34,11 @@ var newTest = {
 }
 console.log(a); //[]`,
             functs: [],
-            logs: ["0"],
-            vars: []
+            logs: [{val: "0", scopeName: "genericBlock"}],
+            vars: [{name: "a", val: 0, type: "let", scopeName : "genericBlock"}]
         },
+
+
         {
             title: "Add a console.log(a,b) somewhere it'll be able to successfully reference both a and b.",
             text: `In other words, while only adding a console.log(a,b) somewhere get this code to console.log(0,1);`,
@@ -56,12 +58,12 @@ console.log(a); //[]`,
     }
 }`,
             functs: [],
-            logs: ["0 1"],
-            vars: []
+            logs: [{val: "0 1", scopeName: "genericBlock"}],
+            vars: [{name: "a", val: 0, type: "let", scopeName : "genericBlock"}, {name: "b", val: 1, type: "const", scopeName : "genericBlock"}]
         },
         {
-            title: "without touching the console.log change this code so that the console.log(a,b,c) logs out 0, 0, 0.",
-            text: `when referencing a variable the variable that is referenced is the closest one out from where the reference happens`,
+            title: "Without touching the console.log change this code so that the console.log(a,b,c) logs out 0, 0, 0.",
+            text: `When referencing a variable the variable that is referenced is the closest one out from where the reference happens`,
             example: `Here the console.log(a,b,c) will console.log out 2, 1, 0 because when it goes looking for a, b, and c it'll first find
 the a in the inner block, then it'll look in the middle block and find b, and then it'll look in the outer block and find c.
 { // outer block 
@@ -91,8 +93,10 @@ the a in the inner block, then it'll look in the middle block and find b, and th
     }
 }`,
             functs: [],
-            logs: ["0 0 0"],
-            vars: []
+            logs: [{val: "0 0 0", scopeName: "genericBlock"}],
+            vars: [{name: "a", val: 0, type: "let", scopeName : "genericBlock"}],
+            stringTests: ["console.log(a,b,c)"]
+
         },
         {
             title: "Add a console.log(a) inside of every block where it'll log out a 1",
@@ -124,8 +128,9 @@ the a in the inner block, then it'll look in the middle block and find b, and th
     }
 }`,
             functs: [],
-            logs: ["1", "1"],
-            vars: []
+            logs: [{val: "1", scopeName: "genericBlock"}, {val: "1", scopeName: "genericBlock"}],
+            vars: [],
+            stringTests: ["console.log(a)", "console.log(a)"]
         },
         {
             title: "Code Blocks",
@@ -196,8 +201,9 @@ from effecting it.`,
     //[console.log(a);]
 }`,
             functs: [],
-            logs: ["2", "2", "2", "0"],
-            vars: [{name: "a", value: 0, scopeName: "genericBlock"}, {name: "a", value: 2, scopeName: "genericBlock"}]
+            logs: [{val: "0", scopeName: "genericBlock"}, {val: "2", scopeName: "genericBlock"}, {val: "2", scopeName: "genericBlock"}, {val: "2", scopeName: "genericBlock"}],
+            stringTests: ["console.log(a)", "console.log(a)", "console.log(a)", "console.log(a)"],
+            vars: [{name: "a", val: 0, type: "let" , scopeName: "genericBlock"}, {name: "a", type: "let", val: 2, scopeName: "genericBlock"}]
         },
         {
             title: "Now by removing one line of code make this code console.log out 2,2,2,2",
@@ -239,8 +245,9 @@ from effecting it.`,
     console.log(a);
 }`,
             functs: [],
-            logs: ["0", "0", "0", "0"],
-            vars: [{name: "a", value: 2, scopeName: "genericBlock"}]
+            logs: [{val: "2", scopeName: "genericBlock"}, {val: "2", scopeName: "genericBlock"}, {val: "2", scopeName: "genericBlock"}, {val: "2", scopeName: "genericBlock"}],
+            vars: [{name: "a", val: 2, type: "let", scopeName: "genericBlock"}],
+            stringTests: ["console.log(a)", "console.log(a)", "console.log(a)", "console.log(a)"]
         },
         {
             title: "Now add a new untagged assignment b = 3 under the a = 2.",
@@ -248,8 +255,9 @@ from effecting it.`,
 this will go all the way out to the global frame outside all the blocks. When it get's there there is nowhere else for it to look
 so it will create a new global variable b and set it equal to 3. Place a console.log(b) outside all the code blocks.`,
             example: `If you'd placed a console.log(a) where the console.log(b) is it would have error-ed out because there was no a there. try doing that, then after it errors out, try turning the a = 2 into a window.a = 2`,
-            startingCode: `{//wrapper for wrapper for wrapper for local
-    let a = 0; //the a = 2 never gets here
+            startingCode: `
+let a = 0; //the a = 2 never gets here
+{
     {// wrapper for wrapper for local
         //looks here third
         {// wrapper for local
@@ -268,8 +276,9 @@ so it will create a new global variable b and set it equal to 3. Place a console
 }
 //[console.log(b);]`,
             functs: [],
-            logs: ["3"],
-            vars: [{name: "b", value: 3, scopeName: "default"}]
+            logs: [{val: "3", scopeName: "default"}],
+            vars: [{name: "b", val: 3, type:"default", scopeName: "default"}],
+            stringTests: ["console.log(b)"]
         },
         {
             title: "window.Variable",
@@ -316,8 +325,9 @@ console.log(b);
 console.log(b);
 //[console.log(a)]`,
             functs: [],
-            logs: ["4"],
-            vars: []
+            logs: [],
+            vars: [],
+            stringTests: ["console.log(a)", "console.log(a)", "console.log(a)", "console.log(a)", "console.log(b)"]
         },
         {
             title: "Functions Reference",
@@ -359,8 +369,9 @@ function example(){
 }
 example();`,
             functs: [],
-            logs: ["0"],
-            vars: []
+            logs: [{val: "0", scopeName: "example"}],
+            vars: [{name:"a", type:"var", val:0, scopeName:"default"}, {name:"b", type:"var", val:0, scopeName:"default"}, {name:"a", type:"var", val:1, scopeName:"example"}],
+            stringTests:["console.log(b)"]
         },
         {
             title: "Add a console.log(a,b,c) after the a = 2;",
@@ -394,8 +405,9 @@ function definesFunction(){
 }
 definesFunction();`,
             functs: [],
-            logs: ["2 1 0"],
-            vars: []
+            logs: [{val: "2 1 0", scopeName: "example"}],
+            vars: [],
+            stringTests: ["console.log(a,b,c)"]
         },
         {
             title: `replace the "example();" with "return example;" "definesFunction();" with "example = definesFunction();" and
@@ -433,7 +445,8 @@ definesFunction(); //[example = definesFunction();]
 //[example();]`,
             functs: [],
             logs: [],
-            vars: []
+            vars: [],
+            stringTests: ["return example", "example = definesFunction()", "example()"]
         },
         {
             title: "Last challenge: add two lines below this code to trigger the console.log(num) inside function d.",
@@ -471,8 +484,9 @@ function a(){
 //[a();]
 //[d();]`,
             functs: [],
-            logs: ["1"],
-            vars: [{name: "num", val: 1, scopeName: "a"}]
+            logs: [{val: "1", scopeName: "d"}],
+            vars: [{name: "num", val: 1, type: "var", scopeName: "a"}],
+            stringTests : ["console.log(num);", "a()", "d()"]
         },
         // {
         //     title: "",

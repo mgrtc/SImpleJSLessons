@@ -5,7 +5,7 @@ var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch(error){
-      return 287400974829234;
+      return 5341691975877615;
   }
   return number;
 };
@@ -46,9 +46,11 @@ function init(newTest){
     firstLineNumber: 0,
     tabSize: 2,
     value: function(){
+
         document.getElementById("codeEditor").addEventListener("keyup", function(){
             localStorage.setItem("textArea", editor.getValue());
         });
+        
         if(localStorage.getItem(`${currentLabID}`)){
           newTest.currentQuestion = localStorage.getItem(`${currentLabID}`);
         }else{
@@ -93,7 +95,6 @@ function runCurrentTest(newTest){
 
   window.logToPage  = function(){
       var args = [...arguments];
-      // $("#ConsoleContainer").append($(`<br>`));
       for(arg of args){
           $("#ConsoleContainer").append($(`<console class="${newClock.getTick()}">> ${arg} </console>`));
       }
@@ -105,17 +106,10 @@ function runCurrentTest(newTest){
   window.storeLogs = function(){
     storedLogs.push([...arguments].join(' '));
   }
-
-  // console.log = function(){
-  //     //hijack it here
-  //     logDup(...arguments);
-  //     storeLogs(...arguments);
-  //     logToPage(...arguments);
-  // }
   //**************
   //run user input
   //**************
-  window.failedTests = []; //very interesting
+  window.failedTests = new Stack(); //very interesting
   try{
     var injection = generateInjection(newTest);
   }catch(error){
@@ -139,14 +133,16 @@ function runCurrentTest(newTest){
   //********************************
   // Clean up changes to console.log
   //********************************
-  if(failedTests.length === 0){
+  if(failedTests.size() === 0){
     $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
     logToPage("you passed!");
     newTest.nextQuestion();
     localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
-    
   }else{
     logToPage("you failed!");
+    while(window.failedTests.size() > 0){
+      logToPage(failedTests.pop());
+    }
   }
   console.log("ft",failedTests);
 }
@@ -163,13 +159,13 @@ function generateInjection(newTest){
   newArray.push(newInjectedCode);
 
   //push other tests here.
+  newArray.push("currentFrame = currentFrame.returnDefaultFrame();")
   newArray.push("(()=>{");
   newArray.push(makeConsoleTester(newTest.returnCurrentQuestion().logs));
   newArray.push(makeVariableTester(newTest.returnCurrentQuestion().vars));
   newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
   newArray.push("})()");
   newArray.push(`
-  currentFrame = currentFrame.returnDefaultFrame();
   window.currentFrame = currentFrame;
   console.log(window.currentFrame);
   // logDup(typeof("currentFrame", currentFrame.variables.get("x").value));

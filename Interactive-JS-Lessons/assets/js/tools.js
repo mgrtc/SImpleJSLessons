@@ -2,10 +2,18 @@ function injectHelpers(array, start){
   // console.log("array before injection : ", array);
     var newArray = new Array();
     var newStack = new Stack();
+    let stringtestdata = newTest.returnCurrentQuestion().stringsTests;
+    let stringTests = new Stack(JSON.parse(JSON.stringify(stringtestdata)));
+    
     if(typeof(start) === "undefined"){
         start = 0;
     }
-    for(i = start; i < array.length; i++){ //this is bound to cause bugs later on.
+    for(let string of array){
+      stringTests.getIndexOfandPop(string.toString());
+    }
+    console.log(stringTests.newStack);
+    for(let i = start; i < array.length; i++){ //this is bound to cause bugs later on.
+
         if(array[i].match(/(^function)+([ ]+)/)){ 
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
@@ -181,6 +189,10 @@ function injectHelpers(array, start){
         }
         // console.log(newStack);
     }
+    while(stringTests.size() > 0){
+      let failedTest = "Failed to detect line : " + stringTests.pop();
+      window.failedTests.push(failedTest);
+    }
     newArray = trimStringInArray(newArray);
     newArray = removeEmptyIndices(newArray);
     return newArray;
@@ -201,29 +213,12 @@ function makeConsoleTester(logs){ //please remake this
     return `
     var logs = ${JSON.stringify(logs)};
     for(log of logs){
-      console.log("log test", log);
-      if(storedLogs.indexOf(log) === -1 ){
-        failedTests.push(log);
-      }else{
-        storedLogs.splice(storedLogs.indexOf(log), 1);
+      if(!searchFramesForConsoleLogging(log.val, log.scopeName, currentFrame)){
+         failedTests.push("Expected scope : " + log.scopeName);
+        failedTests.push("Failed to detect console.log output: " + log.val);
       }
     }
     `
-  }
-  function searchFramesForVariable(variableName, value, startingFrame, frameName){
-    if(
-      startingFrame.findVariable(variableName) && //we need to check if the variable exists (otherwise the next check will error)
-      startingFrame.findVariable(variableName).value === value && //if it does exist we need to check that the values matches
-      frameName === startingFrame.name)  // and we need to check if the frameNames match
-    {
-      return true;
-    }
-    for(child of startingFrame.childrenFrame){ //If we didn't find it in this frame, check all its children recursively
-      if(searchFramesForVariable(variableName, value, child, frameName)){
-        return true;
-      }
-    }
-    return false;
   }
   
 function makeVariableTester(vars){
@@ -233,19 +228,19 @@ function makeVariableTester(vars){
   return `
   var vars = ${JSON.stringify(vars)};
   for(variable of vars){
+    console.log(variable);
     try{
       if(variable.scopeName === undefined){
         if(JSON.stringify(eval(variable.name)) != JSON.stringify(variable.val)){
-          failedTests.push(variable);
+          failedTests.push("Unable to find or match variable " + variable.name + " of type " + variable.type);
         }
       }else{
-        if(searchFramesForVariable(variable.name, variable.val, currentFrame, variable.scopeName) === false){
-          failedTests.push(variable);
-          logToPage("Unable to find or match variable " + variable.name);
+        if(searchFramesForVariable(variable.name, variable.val, variable.type, currentFrame, variable.scopeName) === false){
+          failedTests.push("Unable to find or match variable " + variable.name + " of type " + variable.type);
         };
       }
     }catch{
-      failedTests.push(variable);
+      failedTests.push("Unable to find or match variable " + variable.name + " of type " + variable.type);
     }
   }
   `
