@@ -40,7 +40,7 @@ window.highlightedLineNum = null;
 
 async function timeBreak(lineNum,mainFrame){
     await new Promise((r) => setTimeout(r, 1000));
-    //console.log(lineNum);
+    // console.log(lineNum);
     highlight(lineNum, window.highlightedLineNum);
     window.highlightedLineNum = lineNum;
     makeVisualFrame(mainFrame);
@@ -48,13 +48,16 @@ async function timeBreak(lineNum,mainFrame){
 
 function makeVisualFrame(frame){
     var visFrame = $(`<div class ='frame' id='${frame.name}'></div>`);
-    visFrame.append($(`<p>name: ${frame.name}</p>`))
+    visFrame.append($(`<span>name: ${frame.name}</span></br>`))
+    if(frame.previousFrame){
+        visFrame.append($(`<span>parent: ${frame.previousFrame.name}</span></br>`))
+    }
     frame.variables.forEach((variable)=>{
         var value = variable.value.toString().split("\n")[0];
-        visFrame.append($(`<p'>${variable.type} ${variable.name}: ${value}</p>`))
+        visFrame.append($(`<span'>${variable.type} ${variable.name}: ${value}</span></br>`))
     });
     frame.declaredFunctions.forEach((val, key)=>{
-        visFrame.append($(`<p>func: ${key} </p>`))
+        visFrame.append($(`<span>func: ${key} </span></br>`))
     })
     frame.childrenFrame.forEach((childFrame)=>{
         visFrame.append(makeVisualFrame(childFrame));

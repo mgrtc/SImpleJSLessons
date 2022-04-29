@@ -7,7 +7,6 @@ window.onload = function (){
     ,"currentQuestion":0}  
   var newTest = new Test(data);
   init(newTest);
-  var results = breakIntoComponents(localStorage.getItem("textArea"));
 }
 
 function init(newTest){
@@ -86,6 +85,7 @@ function generateInjection(newTest){
   newArray.push(`
   var functionDeclared = new Map();
   var currentFrame = new Frame();
+  window.defaultFrame = currentFrame.returnDefaultFrame();
   `);
 
   //begin parsing of code in code editor;
@@ -100,12 +100,7 @@ function generateInjection(newTest){
   newArray.push(makeFunctionTester(newTest.returnCurrentQuestion().functs));
   newArray.push(finishTests());
   newArray.push("})()");
-  newArray.push(`
-  window.currentFrame = currentFrame.returnDefaultFrame();
-  `);
-  newArray.push(`
-  console.log(window.currentFrame)
-  `);
+  newArray.push(`console.log(window.defaultFrame);`);
 
   newArray.push("})()");
   return newArray;

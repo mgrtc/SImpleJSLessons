@@ -4,6 +4,7 @@ function injectHelpers(array, start){
     if(typeof(start) === "undefined"){
         start = 0;
     }
+    console.log(array);
     for(i = start; i < array.length; i++){ //this is bound to cause bugs later on.
         if(array[i].match(/(^function)+([ ]+)/)){  //function decelerations
             console.log("hi", array[i]);
@@ -18,8 +19,9 @@ function injectHelpers(array, start){
             newArray.push("async "+array[i]);
             i++;
             newArray.push(array[i]);
-            newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
-            // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
+            newArray.push(`var parentFrame = currentFrame;`)
+            newArray.push(`{`);
+            newArray.push(`let currentFrame = new Frame(parentFrame, "${functionName}");`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ //ifelse's
           newStack.push("ifelse");
@@ -27,6 +29,7 @@ function injectHelpers(array, start){
         }  
         else if(array[i].match(/(=)+(\s*)\bfunction/)){ //anonymous function decelerations
           // newArray.push(array[i]);
+          newStack.push("function");
           var deceleration = array[i].split(/[=]/)[0].split(/\s/);
           var arguments = array[i].split(/[=]/)[1].split(/\(/)[1].split(/\)/)[0];
           // console.log(deceleration, arguments);
@@ -57,7 +60,9 @@ function injectHelpers(array, start){
           newArray.push(`async function ${functionName}(${arguments})`);
           i++;
           newArray.push(array[i]);
-          newArray.push(`currentFrame = new Frame(currentFrame, "${functionName}");`);
+          newArray.push(`var parentFrame = currentFrame;`)
+          newArray.push(`{`);
+          newArray.push(`let currentFrame = new Frame(parentFrame, "${functionName}");`);
         }
         else if(array[i].match(/(^var)+([ ]+)/)){ //variable decelerations
             newArray.push(array[i]);
@@ -76,14 +81,13 @@ function injectHelpers(array, start){
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
-            newArray.push("currentFrame = currentFrame.returnParentFrame();")
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
         }
         else if(array[i].match(/([}])/)){
           if(newStack.peek() === "function"){
-            newArray.push("currentFrame = currentFrame.returnParentFrame();")
+            newArray.push(`}`)
           }
             newArray.push(array[i]);
             newStack.pop();

@@ -91,7 +91,6 @@ function returnFrameContainingVariable(newFrame, variableName){
   while (!newFrame.variables.has(variableName) && typeof (newFrame.previousFrame) !== "undefined") {
     newFrame = newFrame.previousFrame;
   }
-  console.log(newFrame, variableName);
   return newFrame;
 }
 function returnFrameContainingFunctionDEF(newFrame, functionName){
