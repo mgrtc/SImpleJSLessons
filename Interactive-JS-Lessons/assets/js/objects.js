@@ -24,7 +24,9 @@ class Test{
       return;
     }
     this.currentQuestion++;
-    editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
+    if(this.testQuestionSet[this.currentQuestion].startingCode !== ("" || undefined)){
+      editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
+    }
     localStorage.setItem("textArea", editor.getValue());
   }
   returnCurrentQuestion(){

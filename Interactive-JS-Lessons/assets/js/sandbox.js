@@ -23,6 +23,7 @@ function fetchData(newLabID){
     //i still need to create the ssl certs for the server. so we will just use http for now. I mean its not like im sending anything too interesting
       if(data.error){
           console.log(data.error);
+          init()
       }else{
           newTest = new Test(data);
           console.log(newTest);
