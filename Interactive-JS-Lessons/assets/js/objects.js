@@ -339,11 +339,6 @@ class Stack {
    this.pop(index);
   }
 }
-function cleanString(string){
-  string = string.trim();
-  string = string.split(";")[0].trim();
-  return string;
-}
 //others
 class Clock{
   tick;

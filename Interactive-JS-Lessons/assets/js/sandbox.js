@@ -1,6 +1,7 @@
 var newClock = new Clock();
 var editor;
 var newTest;
+var gutter;
 var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
@@ -76,6 +77,7 @@ function init(newTest){
         autoCloseBrackets: true,
         extraKeys: {"Ctrl-Q": "toggleComment"},
     });
+    gutter = document.getElementsByClassName("CodeMirror-linenumber");
     displayTests(newTest);
     addRunButtonEventListener(document.getElementById("run"), newTest);
 }
@@ -87,6 +89,8 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
+  lineNumberMap = new Map(); //just use a hash map???
+  gutterCounter = 0;
   //******************
   //hijack console.log
   //******************
@@ -115,6 +119,7 @@ function runCurrentTest(newTest){
     var injection = generateInjection(newTest);
   }catch(error){
     logToPage(error);
+    console.log(error);
     return;
   }
   console.log("injection", injection.join("\n"));

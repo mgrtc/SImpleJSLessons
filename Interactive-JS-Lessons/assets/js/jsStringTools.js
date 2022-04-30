@@ -12,6 +12,35 @@ function splitBySemi(array){
   }
   return newArray;
 }
+function detectFunctionCalls(string){
+  const detectFunctCalls = new RegExp(/(^[a-zA-Z0-9]+)+([ ]*)+([(])+([a-z,A-Z,0-9,\s,.,+,-,*,/,=,"]*)+([)])/gm);
+  //make improvements here https://regex101.com/r/MqSsCA/1
+  if(detectFunctCalls.test(string)){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+function cleanString(string){
+  string = string.trim();
+  if(string.lastIndexOf(";") > -1){
+    string = string.substring(0, string.lastIndexOf(";"));
+  }
+  console.log(string);
+  return string;
+}
+function hash(str) {
+  let h1 = 0xdeadbeef ^ 0, h2 = 0x41c6ce57 ^ 0;
+  for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1>>>0);
+};
 function breakIntoComponents(inputString) {
     // console.log(inputString);
     //this needs more work
@@ -19,14 +48,22 @@ function breakIntoComponents(inputString) {
     //inputString = inputString.replace(/\n/g, " ");
     // inputString = trimStringInArray(inputString.split("\n"));
     // inputString = commentsCleanse(inputString);
-    inputString = inputString.split(/([\n])/g);
+    inputString = inputString.split("\n");
+    // inputString = removeEmptyIndices(inputString);
     inputString = commentsCleanse(inputString);
-    inputString = splitBySemi(inputString);
+    for(let i in inputString){
+      let newHash = hash(i);
+      inputString[i] = cleanString(inputString[i]) + "//lineNumber="+newHash;
+      lineNumberMap.set(newHash, i);
+    }
+        console.log(lineNumberMap);
+    // inputString = splitBySemi(inputString);
     inputString = trimStringInArray(inputString);
     inputString = removeEmptyIndices(inputString);
     // inputString.match(/[^\;]+\;?|\;/g);
     var outputArray = splitByBrackets(inputString);
-    outputArray = combineSemiColonsWithPreviousLines(outputArray);
+    //  outputArray = combineSemiColonsWithPreviousLines(outputArray);
+     outputArray = removeEmptyIndices(outputArray);
     outputArray = injectHelpers(outputArray);
     return outputArray;
   }
@@ -40,7 +77,7 @@ function breakIntoComponents(inputString) {
         newArray.push(string);
       }
     }
-    newArray = removeEmptyIndices(newArray);
+    // newArray = removeEmptyIndices(newArray);
     return newArray;
   }
   function splitByBrackets(inputString){
@@ -56,9 +93,9 @@ function breakIntoComponents(inputString) {
     return outputArray;
   }
   function trimStringInArray(array) {
-    for (var index = 0; index < array.length; index++) {
-      array[index] = array[index].trim();
-    }
+    // for (var index = 0; index < array.length; index++) {
+    //   array[index] = array[index].trim();
+    // }
     return array;
   }
   function removeEmptyIndices(array) {
