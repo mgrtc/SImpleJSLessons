@@ -19,14 +19,12 @@ function injectHelpers(array, start){
     var newStack = new Stack();
     let stringtestdata = newTest.returnCurrentQuestion().stringsTests;
     let stringTests = new Stack(JSON.parse(JSON.stringify(stringtestdata)));
-    console.log(array);
     
     if(typeof(start) === "undefined"){
         start = 0;
     }
     for(let string of array){
       string = string.split(/\/\//)[0];
-      console.log(string);
       stringTests.getIndexOfandPop(string.toString());
     }
     for(let i = start; i < array.length; i++){ //this is bound to cause bugs later on.
@@ -35,7 +33,7 @@ function injectHelpers(array, start){
         if(array[i].match(/(^function)+([ ]+)/)){ 
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
-            var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
             functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];
             var inputs = trimStringInArray(array[i].split("function ")[1].split(/[(|)]/)[1].split(","));
             // console.log("inputs: ", inputs);
@@ -59,7 +57,7 @@ function injectHelpers(array, start){
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
-          var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
           newStack.push("blockscope");
           newArray.push(array[i]);
           if(array[i].match(/(^if)/)){
@@ -74,7 +72,7 @@ function injectHelpers(array, start){
           newArray.push(`visualizeLineNumbers(${hash});`);
         } 
         else if((/(^for)/g).test(array[i])){
-          var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
           newStack.push("blockscope");
           newArray.push(array[i]);
           i++;
@@ -84,7 +82,7 @@ function injectHelpers(array, start){
         } 
 
         else if((/(^while)/g).test(array[i])){
-          var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
           newStack.push("blockscope");
           newArray.push(array[i]);
           i++;
@@ -95,7 +93,7 @@ function injectHelpers(array, start){
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
           if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-            var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);  
@@ -105,7 +103,7 @@ function injectHelpers(array, start){
             newStack.push("anonFunctionOrObject");
             continue;
           }
-          var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
           newArray.push(`visualizeLineNumbers(${hash});`);
           newArray.push(array[i]);
           newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
@@ -113,7 +111,7 @@ function injectHelpers(array, start){
         else if(array[i].match(/(^let)+([ ]+)/)){
             var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
             if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-              var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+              let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
               newArray.push(array[i]);
               i++;
               newArray.push(array[i]);  
@@ -123,7 +121,7 @@ function injectHelpers(array, start){
               newStack.push("anonFunctionOrObject");
               continue;
             }
-            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
             newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
@@ -131,7 +129,7 @@ function injectHelpers(array, start){
         else if(array[i].match(/(^const)+([ ]+)/)){
           var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
           if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-            var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);  
@@ -141,7 +139,7 @@ function injectHelpers(array, start){
             newStack.push("anonFunctionOrObject");
             continue;
           }
-          var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
           newArray.push(`visualizeLineNumbers(${hash});`);
           newArray.push(array[i]);
           newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
@@ -150,7 +148,7 @@ function injectHelpers(array, start){
           var variableName = array[i].split(/=/)[0].trim();  
           
           if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
-              var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+              let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
               newArray.push(array[i]);
               i++;
               newArray.push(array[i]);
@@ -159,13 +157,13 @@ function injectHelpers(array, start){
               newStack.push("variableRedeclaration");
               continue;
             }
-            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
-          var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
           newArray.push(`visualizeLineNumbers(${hash});`);
           newArray.push("currentFrame = frameStack.pop() || currentFrame.returnPreviousFunctionScope();")
           newArray.push(array[i]);
@@ -173,11 +171,10 @@ function injectHelpers(array, start){
           // newArray.push(array[i]);
         }
         else if(array[i].match(/(^console.log)/)){ 
-          var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
           logString = logString.split(/\/\//)[0];
           logString = logString.split(";")[0];
-          console.log("log string is", logString);
           logString = logString.slice(1, logString.length - 1);
           var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
           newArray.push(`{
@@ -201,7 +198,7 @@ function injectHelpers(array, start){
             newArray.push(`currentFrame.addVariable("${type}", "${name}", ${name});`);
           }
           else if(newStack.peek() === "function"){
-            var hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push("currentFrame = frameStack.pop();");
             newArray.push(array[i]);
@@ -227,7 +224,7 @@ function injectHelpers(array, start){
         }
         else if(array[i].match(/{/)){
           if(newStack.peek() !== ("anonFunctionOrObject" && "variableRedeclaration")){ //i learned a new syntax today
-            var hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
             console.log("new hash is", hash);
             newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
@@ -238,7 +235,7 @@ function injectHelpers(array, start){
             newStack.push("{");
           }
         }else if(detectFunctionCalls(array[i])){
-          var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
           newArray.push(`visualizeLineNumbers(${hash});`);
           newArray.push(array[i]);
         }

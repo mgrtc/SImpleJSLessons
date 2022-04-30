@@ -27,7 +27,6 @@ function cleanString(string){
   if(string.lastIndexOf(";") > -1){
     string = string.substring(0, string.lastIndexOf(";"));
   }
-  console.log(string);
   return string;
 }
 function hash(str) {
