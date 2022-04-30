@@ -17,9 +17,7 @@ var activeAnimationListener = {
   }
 }
 activeAnimationListener.registerListener(function (val) {
-  console.log(val);
   if (val === 0) {
-    console.log("hello is it even doing anything")
     if(window.failedTests.size() === 0){
       $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
       logToPage("you passed!");
@@ -65,6 +63,23 @@ function fetchData(newLabID){
           init(newTest);
       }
   });
+}
+
+function checkTests(){
+  if(window.failedTests.size() === 0){
+    $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
+    logToPage("you passed!");
+    newTest.nextQuestion();
+    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
+  }else{
+    logToPage("you failed!");
+    while(window.failedTests.size() > 0){
+      logToPage(failedTests.pop());
+    }
+  }
+  setTimeout(() => {
+    gutter = undefined;
+  }, 100);
 }
 
 function init(newTest){

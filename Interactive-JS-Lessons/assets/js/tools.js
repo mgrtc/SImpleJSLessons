@@ -71,7 +71,7 @@ function injectHelpers(array, start){
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
           let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
-          newStack.push("blockscope");
+          newStack.push("ifelse");
           newArray.push(array[i]);
           if(array[i].match(/(^if)/)){
             i++;
@@ -226,12 +226,17 @@ function injectHelpers(array, start){
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
           }
           else if(newStack.peek() === "{"){
-            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
-            console.log("hash is", hash);
             newArray.push(array[i]);
             newStack.pop();
           }
           else if(newStack.peek() === "blockscope"){
+            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+            newArray.push(`visualizeLineNumbers(${hash});`);
+            newArray.push('currentFrame = currentFrame.previousFrame;');
+            newArray.push(array[i]);
+            newStack.pop();
+          }
+          else if(newStack.peek() === "ifelse"){
             newArray.push('currentFrame = currentFrame.previousFrame;');
             newArray.push(array[i]);
             newStack.pop();
