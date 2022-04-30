@@ -25,6 +25,9 @@ function detectFunctionCalls(string){
 function cleanString(string){
   string = string.trim();
   if(string.lastIndexOf(";") > -1){
+    if(string.match(/^for/)){
+      return string;
+    }
     string = string.substring(0, string.lastIndexOf(";"));
   }
   return string;

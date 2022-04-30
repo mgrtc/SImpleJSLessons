@@ -89,8 +89,12 @@ function injectHelpers(array, start){
           newArray.push(`visualizeLineNumbers(${hash});`);
         } 
         else if((/(^for)/g).test(array[i])){
+          console.log(array[i]);
+          console.log(array[i+2]);
           let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
           newStack.push("blockscope");
+          newArray.push(array[i]);
+          i++;
           newArray.push(array[i]);
           i++;
           newArray.push(array[i]);
