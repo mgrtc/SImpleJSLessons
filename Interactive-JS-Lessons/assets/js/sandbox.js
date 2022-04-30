@@ -2,6 +2,40 @@ var newClock = new Clock();
 var editor;
 var newTest;
 var gutter;
+var activeAnimationListener = { 
+  aInternal: 0,
+  aListener: function (val) { },
+  set active(val) {
+      this.aInternal = val;
+      this.aListener(val);
+  },
+  get active() {
+      return this.aInternal;
+  },
+  registerListener: function (listener) {
+      this.aListener = listener;
+  }
+}
+activeAnimationListener.registerListener(function (val) {
+  console.log(val);
+  if (val === 0) {
+    console.log("hello is it even doing anything")
+    if(window.failedTests.size() === 0){
+      $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
+      logToPage("you passed!");
+      newTest.nextQuestion();
+      localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
+    }else{
+      logToPage("you failed!");
+      while(window.failedTests.size() > 0){
+        logToPage(failedTests.pop());
+      }
+    }
+    setTimeout(() => {
+      gutter = undefined;
+    }, 100);
+}  
+});
 var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
@@ -33,26 +67,15 @@ function fetchData(newLabID){
   });
 }
 
-// function(){
-//   try{
-//       var number = Number((window.location.href).split('?')[1].split('=')[1]);
-//   }catch(error){
-//       return 664981842751798;
-//   }
-//   return number;
-// }()};
-
 function init(newTest){
     editor = CodeMirror(document.querySelector('#codeEditor'), {
     lineNumbers: true,
     firstLineNumber: 0,
     tabSize: 2,
     value: function(){
-
         document.getElementById("codeEditor").addEventListener("keyup", function(){
             localStorage.setItem("textArea", editor.getValue());
         });
-        
         if(localStorage.getItem(`${currentLabID}`)){
           newTest.currentQuestion = localStorage.getItem(`${currentLabID}`);
         }else{
@@ -77,7 +100,6 @@ function init(newTest){
         autoCloseBrackets: true,
         extraKeys: {"Ctrl-Q": "toggleComment"},
     });
-    gutter = document.getElementsByClassName("CodeMirror-linenumber");
     displayTests(newTest);
     addRunButtonEventListener(document.getElementById("run"), newTest);
 }
@@ -89,6 +111,7 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
+  gutter = document.getElementsByClassName("CodeMirror-linenumber");
   lineNumberMap = new Map(); //just use a hash map???
   gutterCounter = 0;
   //******************
@@ -118,7 +141,7 @@ function runCurrentTest(newTest){
   try{
     var injection = generateInjection(newTest);
   }catch(error){
-    logToPage(error);
+    failedTests.push(error);
     console.log(error);
     return;
   }
@@ -126,7 +149,7 @@ function runCurrentTest(newTest){
   try{ //"just wrap it in a try catch"
     Function(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
   }catch(error){
-    logToPage(error);
+    failedTests.push(error);
     return;
   }
   //******************
@@ -139,18 +162,6 @@ function runCurrentTest(newTest){
   //********************************
   // Clean up changes to console.log
   //********************************
-  if(failedTests.size() === 0){
-    $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
-    logToPage("you passed!");
-    newTest.nextQuestion();
-    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
-  }else{
-    logToPage("you failed!");
-    while(window.failedTests.size() > 0){
-      logToPage(failedTests.pop());
-    }
-  }
-  console.log("ft",failedTests);
 }
 function generateInjection(newTest){
   var newArray = new Array();

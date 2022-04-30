@@ -41,14 +41,7 @@ function hash(str) {
   return 4294967296 * (2097151 & h2) + (h1>>>0);
 };
 function breakIntoComponents(inputString) {
-    // console.log(inputString);
-    //this needs more work
-    //first, we must first remove all line breaks and whitespace. we also assume that user writes javascript with the use of semi colons...
-    //inputString = inputString.replace(/\n/g, " ");
-    // inputString = trimStringInArray(inputString.split("\n"));
-    // inputString = commentsCleanse(inputString);
     inputString = inputString.split("\n");
-    // inputString = removeEmptyIndices(inputString);
     inputString = commentsCleanse(inputString);
     for(let i in inputString){
       let newHash = hash(i);

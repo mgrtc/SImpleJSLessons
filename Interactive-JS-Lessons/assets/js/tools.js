@@ -1,12 +1,25 @@
 var lineNumberMap = new Map(); //just use a hash map???
 var gutterCounter = 0;
-const gutterDelay = 400;
-function visualizeLineNumbers(hash){
+const gutterDelay = 500;
+var labID = function(){
+  try{
+      var number = Number((window.location.href).split('?')[1].split('=')[1]);
+  }catch(error){
+      return 374760806408347;
+  }
+  return number;
+};
+function visualizeLineNumbers(hash, logs){
   if(lineNumberMap.get(hash)){
     let lineNum = lineNumberMap.get(hash);
     setTimeout(function(){
+      if(typeof(logs) !== "undefined"){
+        logToPage(logs);
+      }
+      activeAnimationListener.active++;
       gutter[lineNum].style.background = "limegreen";
       setTimeout(function(){
+        activeAnimationListener.active--;
         gutter[lineNum].style.background = "";
       }, gutterDelay);
     }, gutterDelay * gutterCounter);
@@ -179,12 +192,12 @@ function injectHelpers(array, start){
           var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
           newArray.push(`{
           let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
-          logToPage(logString);
+          // logToPage(logString);
           storeLogs(logString);
           currentFrame.addConsoleLogs(logString)
+          visualizeLineNumbers(${hash}, logString);
           }`);
           newArray.push(`visualizeLineNumbers(${hash});`);
-          // newArray.push(`visualizeLineNumbers('${array[x]}`);
         }  
         else if(array[i].match(/}/g)){
           if(newStack.peek() === "anonFunctionOrObject"){
@@ -212,7 +225,9 @@ function injectHelpers(array, start){
             newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
           }
-          else if(newStack.peek().match(/{/g)){
+          else if(newStack.peek() === "{"){
+            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+            console.log("hash is", hash);
             newArray.push(array[i]);
             newStack.pop();
           }
@@ -223,16 +238,15 @@ function injectHelpers(array, start){
           }
         }
         else if(array[i].match(/{/)){
-          if(newStack.peek() !== ("anonFunctionOrObject" && "variableRedeclaration")){ //i learned a new syntax today
+          if(newStack.peek() === ("anonFunctionOrObject" || "variableRedeclaration" || "{")){ //i learned a new syntax today
+            newArray.push(array[i]);
+            newStack.push("{");
+          }else{
             let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
-            console.log("new hash is", hash);
             newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "genericBlock", "blocked");`);
             newStack.push("blockscope");
-          }else{
-            newArray.push(array[i]);
-            newStack.push("{");
           }
         }else if(detectFunctionCalls(array[i])){
           let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
