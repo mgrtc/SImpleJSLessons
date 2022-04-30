@@ -63,7 +63,7 @@ function breakIntoComponents(inputString) {
     let newArray = new Array();
     for(string of array){
       if(string.match(/(?:\/\/)/)){
-        let cleansedString = string.split(/[/]+/)[0];
+        let cleansedString = string.split(/(?:\/\/)/)[0];
         newArray.push(cleansedString);
       }else{
         newArray.push(string);

@@ -31,7 +31,7 @@ activeAnimationListener.registerListener(function (val) {
     }
     setTimeout(() => {
       gutter = undefined;
-    }, 100);
+    }, 600);
 }  
 });
 var labID = function(){
@@ -157,15 +157,16 @@ function runCurrentTest(newTest){
     var injection = generateInjection(newTest);
   }catch(error){
     failedTests.push(error);
+    logToPage(error);
     console.log(error);
-    return;
   }
   console.log("injection", injection.join("\n"));
   try{ //"just wrap it in a try catch"
     Function(injection.join("\n"))(); //we should look into this option, though I wasn't able to access internal variables and functions https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function
   }catch(error){
     failedTests.push(error);
-    return;
+    logToPage(error);
+    console.log(error);
   }
   //******************
   //analyze user input

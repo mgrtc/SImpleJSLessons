@@ -17,10 +17,14 @@ function visualizeLineNumbers(hash, logs){
         logToPage(logs);
       }
       activeAnimationListener.active++;
-      gutter[lineNum].style.background = "limegreen";
+      if(typeof(gutter[lineNum]) !== "undefined"){
+        gutter[lineNum].style.background = "limegreen";
+      }
       setTimeout(function(){
         activeAnimationListener.active--;
-        gutter[lineNum].style.background = "";
+        if(typeof(gutter[lineNum]) !== "undefined"){
+          gutter[lineNum].style.background = "";
+        }
       }, gutterDelay);
     }, gutterDelay * gutterCounter);
     gutterCounter++;
@@ -104,8 +108,8 @@ function injectHelpers(array, start){
           newArray.push(`currentFrame = new Frame(currentFrame, "whileLoopBlock", "blocked");`);
         } 
         else if(array[i].match(/(^var)+([ ]+)/)){
-          var variableName = array[i].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+          var variableName = array[i].split(/\/\//)[0].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
             let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(array[i]);
             i++;
@@ -122,8 +126,8 @@ function injectHelpers(array, start){
           newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
-            var variableName = array[i].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-            if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+            var variableName = array[i].split(/\/\//)[0].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+            if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
               let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
               newArray.push(array[i]);
               i++;
@@ -140,8 +144,8 @@ function injectHelpers(array, start){
             newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^const)+([ ]+)/)){
-          var variableName = array[i].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
-          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
+          var variableName = array[i].split(/\/\//)[0].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
             let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
             newArray.push(array[i]);
             i++;
@@ -160,7 +164,7 @@ function injectHelpers(array, start){
       else if(detectStatementVariableReassignment(array[i])){
           var variableName = array[i].split(/=/)[0].trim();  
           
-          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" || array[i].split("=")[1].trim().match(/(^function)/))){
+          if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){
               let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
               newArray.push(array[i]);
               i++;
