@@ -160,8 +160,8 @@ function injectHelpers(array, start){
               continue;
             }
             var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(array[i]);
             newArray.push(`visualizeLineNumbers(${hash});`);
+            newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
