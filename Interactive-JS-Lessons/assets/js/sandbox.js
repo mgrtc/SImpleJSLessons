@@ -30,8 +30,13 @@ activeAnimationListener.registerListener(function (val) {
       }
     }
     setTimeout(() => {
+      for(line of gutter){
+        line.classList.remove("fadeInVis");
+        line.classList.remove("fadeOutVis");
+      }
       gutter = undefined;
-    }, 600);
+      lineNumberMap = undefined;
+    }, 0);
 }  
 });
 var labID = function(){
@@ -129,6 +134,7 @@ function runCurrentTest(newTest){
   gutter = document.getElementsByClassName("CodeMirror-linenumber");
   lineNumberMap = new Map(); //just use a hash map???
   gutterCounter = 0;
+  editor.setValue(editor.doc.getValue());
   //******************
   //hijack console.log
   //******************

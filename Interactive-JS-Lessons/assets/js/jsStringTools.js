@@ -46,8 +46,9 @@ function hash(str) {
 function breakIntoComponents(inputString) {
     inputString = inputString.split("\n");
     inputString = commentsCleanse(inputString);
+    let newSeed = Math.random() * 17;
     for(let i in inputString){
-      let newHash = hash(i);
+      let newHash = hash(i+newSeed+"");
       inputString[i] = cleanString(inputString[i]) + "//lineNumber="+newHash;
       lineNumberMap.set(newHash, i);
     }

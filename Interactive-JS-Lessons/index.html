@@ -108,18 +108,18 @@ console {
 .passed {
     filter: opacity(.3);
 }
+.hide {
+    display: none;
+}
 .fadeOut {
     filter: opacity(.5);
-    animation-name: fadeOut;
+    animation-name: fadeOutTest;
 	animation-iteration-count: 1;
 	animation-timing-function: ease-in;
 	animation-duration:200ms;
     background-color: rgba(0, 153, 255, 0.203);
 }
-.hide {
-    display: none;
-}
-@keyframes fadeOut {
+@keyframes fadeOutTest {
 	0% {
         background-color: rgba(0, 0, 0, 0);
 		filter: opacity(1);
@@ -129,6 +129,37 @@ console {
 		filter: opacity(.5);
 	}
 }
+@keyframes fadeOut {
+	0% {
+        background-color: limegreen;
+		filter: opacity(1);
+	}
+	100% {
+        background-color: rgba(0,0,0,0);
+		filter: opacity(.5);
+	}
+}
+.fadeOutVis {
+    animation-name: fadeOut;
+	animation-iteration-count: 1;
+	animation-duration:200ms;
+}
+.fadeInVis {
+    animation-name: fadeIn;
+	animation-iteration-count: 1;
+	animation-duration:150ms;
+}
+@keyframes fadeIn {
+	0% {
+        background-color: rgba(0,0,0,0);
+		filter: opacity(0);
+	}
+	100% {
+        background-color: limegreen;
+		filter: opacity(1);
+	}
+}
+
 </style>
 <script>
 

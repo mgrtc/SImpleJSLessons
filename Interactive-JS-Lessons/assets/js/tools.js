@@ -18,16 +18,18 @@ function visualizeLineNumbers(hash, logs){
       }
       activeAnimationListener.active++;
       if(typeof(gutter[lineNum]) !== "undefined"){
-        gutter[lineNum].style.background = "limegreen";
+        gutter[lineNum].classList.add("fadeInVis");
       }
       setTimeout(function(){
         activeAnimationListener.active--;
         if(typeof(gutter[lineNum]) !== "undefined"){
-          gutter[lineNum].style.background = "";
+          gutter[lineNum].classList.add("fadeOutVis");
         }
       }, gutterDelay);
     }, gutterDelay * gutterCounter);
-    gutterCounter++;
+    if(typeof(gutter[lineNum]) !== "undefined"){
+      gutterCounter++;
+    }
   }
 }
 function injectHelpers(array, start){
@@ -74,7 +76,14 @@ function injectHelpers(array, start){
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
-          let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          let hash;
+          if(array[i].match(/^if/)){
+              hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+              hash = undefined;
+          }else{
+            hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          }
           newStack.push("ifelse");
           newArray.push(array[i]);
           if(array[i].match(/(^if)/)){
