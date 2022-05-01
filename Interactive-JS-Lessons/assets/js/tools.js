@@ -1,6 +1,6 @@
 var lineNumberMap = new Map(); //just use a hash map???
 var gutterCounter = 0;
-const gutterDelay = 200;
+const gutterDelay = 100;
 var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
@@ -22,7 +22,7 @@ function visualizeLineNumbers(hash, logs){
       }
       setTimeout(function(){
         if(typeof(gutter[lineNum]) !== "undefined"){
-          gutter[lineNum].style.background = "";
+          gutter[lineNum].style.background = "none";
         }
         activeAnimationListener.active--;
       }, gutterDelay);
@@ -98,17 +98,17 @@ function injectHelpers(array, start){
           newArray.push(`visualizeLineNumbers(${hash});`);
         } 
         else if((/(^for)/g).test(array[i])){
-          console.log(array[i]);
-          console.log(array[i+2]);
           let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
-          newStack.push("blockscope");
+          newStack.push(hash);
+          newStack.push("forBlockscope");
+          newArray.push(`let f${hash} = false`)
           newArray.push(array[i]);
           i++;
           newArray.push(array[i]);
           i++;
           newArray.push(array[i]);
           newArray.push(`visualizeLineNumbers(${hash});`);
-          newArray.push(`currentFrame = new Frame(currentFrame, "forLoopBlock", "blocked");`);
+          newArray.push(`if(f${hash} === false){currentFrame = new Frame(currentFrame, "forLoopBlock", "blocked");}f${hash} = true`);
         } 
 
         else if((/(^while)/g).test(array[i])){
@@ -253,6 +253,14 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newStack.pop();
           }
+          else if(newStack.peek() === "forBlockscope"){
+            newStack.pop();
+            let fhash = "f" + newStack.pop();
+            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+            newArray.push(`visualizeLineNumbers(${hash});`);
+            newArray.push(array[i]);
+            newArray.push(`${fhash} = undefined; currentFrame = currentFrame.previousFrame;`);
+          }
           else if(newStack.peek() === "ifelse"){
             newArray.push('currentFrame = currentFrame.previousFrame;');
             newArray.push(array[i]);
@@ -277,8 +285,10 @@ function injectHelpers(array, start){
         }
         else{
           let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-          newArray.push(`visualizeLineNumbers(${hash});`);
-            newArray.push(array[i]);
+          if(!array[i].match(/(^\/\/)/)){
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
+          newArray.push(array[i]);
         }
         // console.log(newStack);
     }

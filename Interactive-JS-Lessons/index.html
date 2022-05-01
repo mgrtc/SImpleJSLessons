@@ -137,7 +137,7 @@ console {
 .fadeInVis {
     animation-name: fadeIn;
 	animation-iteration-count: 1;
-	animation-duration:100ms;
+	animation-duration:200ms;
 }
 @keyframes fadeOut {
 	0% {
@@ -154,6 +154,10 @@ console {
         background-color: rgba(0,0,0,0);
 		filter: opacity(0);
 	}
+    30% {
+        background-color: limegreen;
+		filter: opacity(.8);
+    }
 	100% {
         background-color: limegreen;
 		filter: opacity(1);

@@ -137,7 +137,7 @@ function runCurrentTest(newTest){
   //******************
   //hijack console.log
   //******************
-  if((typeof(newTest.returnCurrentQuestion()) === "undefined")){
+  if((typeof(newTest.returnCurrentQuestion()) === "undefined" || activeAnimationListener.active > 0)){
     return;
   }
 
