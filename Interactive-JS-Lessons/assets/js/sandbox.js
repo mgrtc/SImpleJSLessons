@@ -31,8 +31,7 @@ activeAnimationListener.registerListener(function (val) {
     }
     setTimeout(() => {
       for(line of gutter){
-        line.classList.remove("fadeInVis");
-        line.classList.remove("fadeOutVis");
+        line.style.background = "";
       }
       gutter = undefined;
       lineNumberMap = undefined;

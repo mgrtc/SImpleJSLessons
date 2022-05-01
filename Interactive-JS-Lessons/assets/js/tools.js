@@ -13,23 +13,21 @@ function visualizeLineNumbers(hash, logs){
   if(lineNumberMap.get(hash)){
     let lineNum = lineNumberMap.get(hash);
     setTimeout(function(){
+      activeAnimationListener.active++;
       if(typeof(logs) !== "undefined"){
         logToPage(logs);
       }
-      activeAnimationListener.active++;
       if(typeof(gutter[lineNum]) !== "undefined"){
-        gutter[lineNum].classList.add("fadeInVis");
+        gutter[lineNum].style.background = "limegreen";
       }
       setTimeout(function(){
-        activeAnimationListener.active--;
         if(typeof(gutter[lineNum]) !== "undefined"){
-          gutter[lineNum].classList.add("fadeOutVis");
+          gutter[lineNum].style.background = "";
         }
+        activeAnimationListener.active--;
       }, gutterDelay);
     }, gutterDelay * gutterCounter);
-    if(typeof(gutter[lineNum]) !== "undefined"){
       gutterCounter++;
-    }
   }
 }
 function injectHelpers(array, start){
@@ -60,7 +58,9 @@ function injectHelpers(array, start){
             newArray.push(`{
               let tempFrame = currentFrame.returnPreviousFunctionScope();
               tempFrame.declaredFunctions.set("${functionName}", currentFrame);
+              visualizeLineNumbers(${hash});
             }`);
+            // newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);
@@ -276,6 +276,8 @@ function injectHelpers(array, start){
           newArray.push(array[i]);
         }
         else{
+          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
         }
         // console.log(newStack);

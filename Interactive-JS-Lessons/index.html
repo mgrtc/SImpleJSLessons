@@ -129,16 +129,6 @@ console {
 		filter: opacity(.5);
 	}
 }
-@keyframes fadeOut {
-	0% {
-        background-color: limegreen;
-		filter: opacity(1);
-	}
-	100% {
-        background-color: rgba(0,0,0,0);
-		filter: opacity(.5);
-	}
-}
 .fadeOutVis {
     animation-name: fadeOut;
 	animation-iteration-count: 1;
@@ -147,7 +137,17 @@ console {
 .fadeInVis {
     animation-name: fadeIn;
 	animation-iteration-count: 1;
-	animation-duration:150ms;
+	animation-duration:100ms;
+}
+@keyframes fadeOut {
+	0% {
+        background-color: limegreen;
+		filter: opacity(1);
+	}
+	100% {
+        background-color: rgba(0,0,0,0);
+		filter: opacity(0);
+	}
 }
 @keyframes fadeIn {
 	0% {
