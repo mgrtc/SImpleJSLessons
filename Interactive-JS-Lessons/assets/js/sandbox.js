@@ -18,18 +18,7 @@ var activeAnimationListener = {
 }
 activeAnimationListener.registerListener(function (val) {
   if (val === 0) {
-    if(window.failedTests.size() === 0){
-      console.log(JSON.stringify(window.failedTests));
-      $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
-      logToPage("you passed!");
-      newTest.nextQuestion();
-      localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
-    }else{
-      logToPage("you failed!");
-      while(window.failedTests.size() > 0){
-        logToPage(failedTests.pop());
-      }
-    }
+    checkTests();
     gutterDelay = document.getElementById("exceSlider").value;
     document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
 }  
@@ -69,6 +58,9 @@ function checkTests(){
   if(failedTests.size() === 0){
     $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
     logToPage("you passed!");
+    if(Number(newTest.currentQuestion) == newTest.testQuestionSet.length-1){
+      alert("Congrats on getting to the end!");
+    }
     newTest.nextQuestion();
     localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
   }else{
