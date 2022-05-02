@@ -203,7 +203,7 @@ console {
                     <script>
                         document.getElementById("lineAnimationCheckbox").addEventListener("input", function(){
                             if(this.checked === true){
-                                alert("disable this feature first if you encounter weird errors");
+                                alert(`disable this feature first if you encounter weird errors.\nIf line numbers don't match up with execution, reload the page. It is an issue with a library used.`);
                             }
                         });
                         gutterDelay = document.getElementById("exceSlider").value;
