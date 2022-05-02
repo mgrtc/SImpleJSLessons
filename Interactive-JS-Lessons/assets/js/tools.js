@@ -1,4 +1,5 @@
 var lineNumberMap = new Map(); //just use a hash map???
+var enableLineAnimations = false;
 var gutterCounter = 0;
 var gutterDelay; //x seconds
 var labID = function(){
@@ -50,15 +51,19 @@ function injectHelpers(array, start){
         if(array[i].match(/(^function)+([ ]+)/)){ 
             newStack.push("function");
             var functionName = array[i].split(/(^function)+([ ]+)/);
-            let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            if(enableLineAnimations === true){
+              var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            }
             functionName = removeEmptyIndices(functionName)[1].split(/([a-zA-Z0-9 ]+)+([(])/)[1];
             var inputs = trimStringInArray(array[i].split("function ")[1].split(/[(|)]/)[1].split(","));
             // console.log("inputs: ", inputs);
             // console.log("functionName", functionName);
+            if(enableLineAnimations === true){
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(`{
               let tempFrame = currentFrame.returnPreviousFunctionScope();
               tempFrame.declaredFunctions.set("${functionName}", currentFrame);
-              visualizeLineNumbers(${hash});
             }`);
             // newArray.push(`visualizeLineNumbers(${hash});`);
             newArray.push(array[i]);
@@ -72,17 +77,21 @@ function injectHelpers(array, start){
                 newArray.push(`currentFrame.addVariable("var", "${string}", ${string});`); //all javascript inputs are var's
               }
             }
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             // newArray.push(`functionDeclared.set("${functionName}", currentFrame);`);
         }
         else if(array[i].match(/(^if)/) || array[i].match(/(^else)/)){ 
-          let hash;
-          if(array[i].match(/^if/)){
+          var hash;
+          if(enableLineAnimations === true){
+            if(array[i].match(/^if/)){
               hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
               newArray.push(`visualizeLineNumbers(${hash});`);
               hash = undefined;
-          }else{
-            hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            }else{
+              hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            }
           }
           newStack.push("ifelse");
           newArray.push(array[i]);
@@ -95,10 +104,12 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "elseBlock", "blocked");`);
           }
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
         } 
         else if((/(^for)/g).test(array[i])){
-          let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
           newStack.push(hash);
           newStack.push("forBlockscope");
           newArray.push(`let f${hash} = false`)
@@ -107,102 +118,134 @@ function injectHelpers(array, start){
           newArray.push(array[i]);
           i++;
           newArray.push(array[i]);
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
           newArray.push(`if(f${hash} === false){currentFrame = new Frame(currentFrame, "forLoopBlock", "blocked");}f${hash} = true`);
         } 
 
         else if((/(^while)/g).test(array[i])){
-          let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          if(enableLineAnimations === true){
+            var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+          }
           newStack.push("blockscope");
           newArray.push(array[i]);
           i++;
           newArray.push(array[i]);
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
           newArray.push(`currentFrame = new Frame(currentFrame, "whileLoopBlock", "blocked");`);
         } 
         else if(array[i].match(/(^var)+([ ]+)/)){
           var variableName = array[i].split(/\/\//)[0].split(/^var/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
           if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-            let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            if(enableLineAnimations === true){
+              var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            }
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);  
             newStack.push(variableName);
             newStack.push("var");
-            newStack.push(hash);
+            if(enableLineAnimations === true){
+              newStack.push(hash);
+            }
             newStack.push("anonFunctionOrObject");
             continue;
           }
-          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
           newArray.push(array[i]);
           newArray.push(`currentFrame.addVariable("var", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^let)+([ ]+)/)){
             var variableName = array[i].split(/\/\//)[0].split(/^let/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
             if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-              let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+              if(enableLineAnimations === true){
+                var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+              }
               newArray.push(array[i]);
               i++;
               newArray.push(array[i]);  
               newStack.push(variableName);
               newStack.push("let");
-              newStack.push(hash);
+              if(enableLineAnimations === true){
+                newStack.push(hash);
+              }
               newStack.push("anonFunctionOrObject");
               continue;
             }
-            let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(array[i]);
             newArray.push(`currentFrame.addVariable("let", "${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^const)+([ ]+)/)){
           var variableName = array[i].split(/\/\//)[0].split(/^const/)[1].trim().split(/[=]/)[0].trim().split(/[;]/)[0];
           if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){ //tests if anon function is declared
-            let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            if(enableLineAnimations === true){
+              var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            }
             newArray.push(array[i]);
             i++;
             newArray.push(array[i]);  
             newStack.push(variableName);
             newStack.push("const");
-            newStack.push(hash);
+            if(enableLineAnimations === true){
+              newStack.push(hash);
+            }
             newStack.push("anonFunctionOrObject");
             continue;
           }
-          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
           newArray.push(array[i]);
           newArray.push(`currentFrame.addVariable("const", "${variableName}", ${variableName});`);
       }
       else if(detectStatementVariableReassignment(array[i])){
           var variableName = array[i].split(/=/)[0].trim();  
-          
           if(i !== (array.length -1) && array[i+1].match(/[{]/) && (array[i].split("=")[1].trim() === "" && array[i].split("=")[1].trim().match(/(^function)/))){
-              let hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            if(enableLineAnimations === true){
+              var hash = array[i+2].split(/\/\//)[1].split(/[=]/)[1];
+            }
               newArray.push(array[i]);
               i++;
               newArray.push(array[i]);
               newStack.push(variableName);
-              newStack.push(hash);
+              if(enableLineAnimations === true){
+                newStack.push(hash);
+              }
               newStack.push("variableRedeclaration");
               continue;
             }
-            let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(array[i]);
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
         }
         else if(array[i].match(/(^return)/)){
-          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
           newArray.push("currentFrame = frameStack.pop() || currentFrame.returnPreviousFunctionScope();")
           newArray.push(array[i]);
           // i++;
           // newArray.push(array[i]);
         }
-        else if(array[i].match(/(^console.log)/)){ 
-          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-          console.log("this hash is", hash);
+        else if(array[i].match(/(^console.log)/)){
+          if(enableLineAnimations === true){ 
+            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          }
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
           logString = logString.split(/\/\//)[0];
           logString = logString.split(";")[0];
@@ -210,36 +253,48 @@ function injectHelpers(array, start){
           var logArray = JSON.stringify(logString.split(/,(?=(?:(?:[^"|^']*"){2})*[^"|^']*$)/));
           newArray.push(`{
           let logString = ${logArray}.map(log=>JSON.stringify(eval(log))).join(" ").replace(/["|']/g, '');
-          // logToPage(logString);
+          if(enableLineAnimations === false){logToPage(logString);};
           storeLogs(logString);
           currentFrame.addConsoleLogs(logString)
-          visualizeLineNumbers(${hash}, logString);
+          if(enableLineAnimations === true){
+            visualizeLineNumbers(${hash}, logString);
+          }
           }`);
         }  
         else if(array[i].match(/}/g)){
           if(newStack.peek() === "anonFunctionOrObject"){
             // console.log("hello");
             newStack.pop();
-            let hash = newStack.pop();
+            if(enableLineAnimations === true){
+              var hash = newStack.pop();
+            }
             let type = newStack.pop();
             let name = newStack.pop();
             newArray.push(array[i]);
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(`currentFrame.addVariable("${type}", "${name}", ${name});`);
           }
           else if(newStack.peek() === "function"){
-            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              var hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push("currentFrame = frameStack.pop();");
             newArray.push(array[i]);
             newStack.pop();
           }
           else if(newStack.peek() === "variableRedeclaration"){
             newStack.pop();
-            let hash = newStack.pop();
+            if(enableLineAnimations === true){
+              var hash = newStack.pop();
+            }
             let variableName = newStack.pop();
             newArray.push(array[i]);
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(`currentFrame.updateVariable("${variableName}", ${variableName});`);
           }
           else if(newStack.peek() === "{"){
@@ -247,8 +302,10 @@ function injectHelpers(array, start){
             newStack.pop();
           }
           else if(newStack.peek() === "blockscope"){
-            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              var hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push('currentFrame = currentFrame.previousFrame;');
             newArray.push(array[i]);
             newStack.pop();
@@ -256,8 +313,10 @@ function injectHelpers(array, start){
           else if(newStack.peek() === "forBlockscope"){
             newStack.pop();
             let fhash = "f" + newStack.pop();
-            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              var hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(array[i]);
             newArray.push(`${fhash} = undefined; currentFrame = currentFrame.previousFrame;`);
           }
@@ -272,22 +331,28 @@ function injectHelpers(array, start){
             newArray.push(array[i]);
             newStack.push("{");
           }else{
-            let hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
-            newArray.push(`visualizeLineNumbers(${hash});`);
+            if(enableLineAnimations === true){
+              var hash = array[i+1].split(/\/\//)[1].split(/[=]/)[1];
+              newArray.push(`visualizeLineNumbers(${hash});`);
+            }
             newArray.push(array[i]);
             newArray.push(`currentFrame = new Frame(currentFrame, "genericBlock", "blocked");`);
             newStack.push("blockscope");
           }
         }else if(detectFunctionCalls(array[i])){
-          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
-          newArray.push(`visualizeLineNumbers(${hash});`);
+          if(enableLineAnimations === true){
+            var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+            newArray.push(`visualizeLineNumbers(${hash});`);
+          }
           newArray.push(array[i]);
         }
         else{
-          let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          if(enableLineAnimations === true){
+          var hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
           if(!array[i].match(/(^\/\/)/)){
             newArray.push(`visualizeLineNumbers(${hash});`);
           }
+        }
           newArray.push(array[i]);
         }
         // console.log(newStack);

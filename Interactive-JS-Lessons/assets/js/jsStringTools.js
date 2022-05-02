@@ -46,14 +46,14 @@ function hash(str) {
 function breakIntoComponents(inputString) {
     inputString = inputString.split("\n");
     inputString = commentsCleanse(inputString);
-    let newSeed = Math.random() * 17;
-    for(let i in inputString){
-      let newHash = hash(i+newSeed+"");
-      inputString[i] = cleanString(inputString[i]) + "//lineNumber="+newHash;
-      lineNumberMap.set(newHash, i);
+    if(enableLineAnimations === true){
+      let newSeed = Math.random() * 17;
+      for(let i in inputString){
+        let newHash = hash(i+newSeed+"");
+        inputString[i] = cleanString(inputString[i]) + "//lineNumber="+newHash;
+        lineNumberMap.set(newHash, i);
+      }
     }
-        // console.log(lineNumberMap);
-    // inputString = splitBySemi(inputString);
     inputString = trimStringInArray(inputString);
     inputString = removeEmptyIndices(inputString);
     // inputString.match(/[^\;]+\;?|\;/g);

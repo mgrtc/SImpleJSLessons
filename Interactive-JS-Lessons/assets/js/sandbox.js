@@ -126,10 +126,11 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
-  // editor.setOption("mode", "text/x-csrc");
-  // editor.getWrapperElement().parentNode.removeChild(editor.getWrapperElement());
-  // editor=null;
-
+  localStorage.setItem("textArea", editor.getValue());
+  editor.getDoc().setValue(localStorage.getItem("textArea"));  
+  enableLineAnimations = function(){
+    return document.getElementById("lineAnimationCheckbox").checked;
+  }();
   gutterDelay = document.getElementById("exceSlider").value;
   editor.value = editor.doc.getValue();
   gutter = undefined;
@@ -186,7 +187,9 @@ function runCurrentTest(newTest){
 
   //Very important, because eval treats the frame it was called in as its code's global frame from here we can access the user's global variables and functions
   //So any testing we'd want to do on a user's functions and variables will happen here
-
+  if(enableLineAnimations === false){
+    checkTests();
+  }
   //********************************
   // Clean up changes to console.log
   //********************************

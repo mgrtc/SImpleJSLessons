@@ -8,7 +8,7 @@
     <script src="assets/js/jquery.js"></script>
     
     <!-- default bootstrap items -->
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Navbar-Centered-Brand-Dark.css">
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -36,7 +36,8 @@ body{
 }
 #exceSlider {
     display: inline;
-    background: red;
+    position: relative;
+    top: 4px;
 }
 #run {
     position: relative;
@@ -196,7 +197,8 @@ console {
             <div id="runButtonContainer" class="noselect">
                 <span id="run">Run Code</span>
                 <span style="float: right;">
-                    <p id="timingLabel" style="display: inline-block;"></p>
+                    <input id="lineAnimationCheckbox" type="checkbox" style="position: relative; top:1px;">
+                    <p id="timingLabel" style="display: inline-block;font-size: 10px;"></p>
                     <input id="exceSlider" type="range" min="40" max="1000" value="100" step="20">
                     <script>
                         gutterDelay = document.getElementById("exceSlider").value;
