@@ -1,6 +1,6 @@
 var lineNumberMap = new Map(); //just use a hash map???
 var gutterCounter = 0;
-const gutterDelay = 100;
+var gutterDelay; //x seconds
 var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);

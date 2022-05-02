@@ -29,13 +29,7 @@ activeAnimationListener.registerListener(function (val) {
         logToPage(failedTests.pop());
       }
     }
-    setTimeout(() => {
-      for(line of gutter){
-        line.style.background = "";
-      }
-      gutter = undefined;
-      lineNumberMap = undefined;
-    }, 0);
+    gutterDelay = document.getElementById("exceSlider").value;
 }  
 });
 var labID = function(){
@@ -130,10 +124,17 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
+  gutterDelay = document.getElementById("exceSlider").value;
+  editor.setValue(editor.doc.getValue());
+  gutter = undefined;
   gutter = document.getElementsByClassName("CodeMirror-linenumber");
+  for(line of gutter){
+    line.style.background = "";
+  }
+  lineNumberMap = undefined;
+
   lineNumberMap = new Map(); //just use a hash map???
   gutterCounter = 0;
-  editor.setValue(editor.doc.getValue());
   //******************
   //hijack console.log
   //******************

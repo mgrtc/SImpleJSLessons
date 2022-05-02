@@ -333,6 +333,23 @@ console.log(abc)
 var myFirstVariableName = "Hello World"`,
             logs: [{val: "Hello World", scopeName: "default"}],
             vars: [{name: "myFirstVariableName", type: "var", scopeName: "default", val: "Hello World"}]
+        },
+        {
+            title : "Functions",
+            text : `Much like variables, functions are one of the main building blocks for any programs, but the keyword you need to use to create a function is "function" A function is basically a module inside a piece of code that does one task, and it only does it when its called to do so. 
+
+We want to use functions in our programming because it reduces repetition. If there's something you want to do in your program more than once, you could suppositly keep writing out the code to do that thing multiple times, or you could simply turn it into a function and call it using it's name each time you want to do that thing.`,
+            example : `function exampleFunctionName(){ 
+    var x = "Hello World";
+    console.log(x);               
+}
+//to use this function, you must call it using it's name
+exampleFunctionName();`,
+            startingCode : `//Create a function named myFirstFunction
+//inside the function, create a new variable named x using the keyword "var", and then assign it the value of "Hello World".
+//then call the function`,
+            vars: [{name : "x", val : "Hello World", type: "var", scopeName : "myFirstFunction"}],
+            stringTests : ["function myFirstFunction()", "myFirstFunction()"]
         }
 
       ],

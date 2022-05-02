@@ -34,6 +34,10 @@
 body{
     background-color: rgb(61, 61, 61);
 }
+#exceSlider {
+    display: inline;
+    background: red;
+}
 #run {
     position: relative;
     right: 6px;
@@ -50,6 +54,8 @@ body{
     position: relative;
     padding: 10px;
     background-color: #2e2e2e;
+    /* background-color: #fd0000; */
+    width: 100%;
 }
 #ConsoleContainer {
     overflow-y: scroll;
@@ -187,7 +193,20 @@ console {
         <div id="lessonPage" class="heightAdjustment" style="background: rgb(234, 234, 234);height: 200px;width: 49.999%;overflow: scroll;"></div>
         <div class="heightAdjustment" style="background: rgb(61, 61, 61);height: 200px;width: 49.999%;color: var(--bs-red);">
             <div id="codeEditor" style="width: 100%;"></div>
-            <div id="runButtonContainer" class="noselect"><span id="run">Run Code</span></div>
+            <div id="runButtonContainer" class="noselect">
+                <span id="run">Run Code</span>
+                <span>
+                    <p style="display: inline-block;">Execution Speed: </p>
+                    <input id="exceSlider" type="range" min="25" max="1000" value="25" step="20">
+                    <script>
+                        document.getElementById("exceSlider").addEventListener("input", function(e){
+                            if(activeAnimationListener.active === 0){
+                                gutterDelay = this.value;
+                            }
+                        });
+                    </script>
+                </span>
+            </div>
             <div id="ConsoleContainer">
                 <!-- <console class="tick">> hello world</console>
                 <console class="tock">> 1</console>
