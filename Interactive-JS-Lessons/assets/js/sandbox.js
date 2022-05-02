@@ -31,7 +31,7 @@ activeAnimationListener.registerListener(function (val) {
       }
     }
     gutterDelay = document.getElementById("exceSlider").value;
-    document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000) + "s ";
+    document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
 }  
 });
 var labID = function(){

@@ -200,11 +200,11 @@ console {
                     <input id="exceSlider" type="range" min="40" max="1000" value="100" step="20">
                     <script>
                         gutterDelay = document.getElementById("exceSlider").value;
-                        document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000) + "s ";
+                        document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
                         document.getElementById("exceSlider").addEventListener("input", function(e){
                             if(activeAnimationListener.active === 0){
                                 gutterDelay = this.value;
-                                document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000) + "s ";
+                                document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
                             }
                         });
                     </script>
