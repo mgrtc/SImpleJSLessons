@@ -66,7 +66,7 @@ function fetchData(newLabID){
 }
 
 function checkTests(){
-  if(window.failedTests.size() === 0){
+  if(failedTests.size() === 0){
     $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
     logToPage("you passed!");
     newTest.nextQuestion();
