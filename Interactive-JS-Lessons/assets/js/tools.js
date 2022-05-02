@@ -202,6 +202,7 @@ function injectHelpers(array, start){
         }
         else if(array[i].match(/(^console.log)/)){ 
           let hash = array[i].split(/\/\//)[1].split(/[=]/)[1];
+          console.log("this hash is", hash);
           var logString = array[i].split(/^([ ]*)+(?:[console])+([ ]*)+([.])+([ ]*)+(?:log)/gm)[5];
           logString = logString.split(/\/\//)[0];
           logString = logString.split(";")[0];
@@ -214,7 +215,6 @@ function injectHelpers(array, start){
           currentFrame.addConsoleLogs(logString)
           visualizeLineNumbers(${hash}, logString);
           }`);
-          newArray.push(`visualizeLineNumbers(${hash});`);
         }  
         else if(array[i].match(/}/g)){
           if(newStack.peek() === "anonFunctionOrObject"){

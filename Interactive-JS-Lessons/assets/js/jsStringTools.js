@@ -52,7 +52,7 @@ function breakIntoComponents(inputString) {
       inputString[i] = cleanString(inputString[i]) + "//lineNumber="+newHash;
       lineNumberMap.set(newHash, i);
     }
-        console.log(lineNumberMap);
+        // console.log(lineNumberMap);
     // inputString = splitBySemi(inputString);
     inputString = trimStringInArray(inputString);
     inputString = removeEmptyIndices(inputString);

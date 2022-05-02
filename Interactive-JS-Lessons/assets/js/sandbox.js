@@ -124,8 +124,12 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
+  // editor.setOption("mode", "text/x-csrc");
+  // editor.getWrapperElement().parentNode.removeChild(editor.getWrapperElement());
+  // editor=null;
+
   gutterDelay = document.getElementById("exceSlider").value;
-  editor.setValue(editor.doc.getValue());
+  editor.value = editor.doc.getValue();
   gutter = undefined;
   gutter = document.getElementsByClassName("CodeMirror-linenumber");
   for(line of gutter){
