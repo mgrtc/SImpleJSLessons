@@ -19,6 +19,7 @@ var activeAnimationListener = {
 activeAnimationListener.registerListener(function (val) {
   if (val === 0) {
     if(window.failedTests.size() === 0){
+      console.log(JSON.stringify(window.failedTests));
       $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
       logToPage("you passed!");
       newTest.nextQuestion();

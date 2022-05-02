@@ -3,7 +3,7 @@ const data = {labID: function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch{
-      return 305502808432711;
+      return 5341691975877615;
   }
   return number;
 }()};
