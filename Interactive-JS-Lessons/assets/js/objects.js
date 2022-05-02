@@ -92,7 +92,7 @@ class variableTest{
 }
 class functionTest{
   name; //function name without the parenthesis
-  tests; //
+  tests; 
   functionDefinition;
   constructor(name){
     this.name = name;
