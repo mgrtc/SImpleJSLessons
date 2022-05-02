@@ -30,6 +30,7 @@ activeAnimationListener.registerListener(function (val) {
       }
     }
     gutterDelay = document.getElementById("exceSlider").value;
+    document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000) + "s ";
 }  
 });
 var labID = function(){

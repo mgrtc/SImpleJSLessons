@@ -195,13 +195,14 @@ console {
             <div id="codeEditor" style="width: 100%;"></div>
             <div id="runButtonContainer" class="noselect">
                 <span id="run">Run Code</span>
-                <span>
-                    <p style="display: inline-block;">Execution Speed: </p>
+                <span style="float: right;">
+                    <p id="timingLabel" style="display: inline-block;">Timing : .04s </p>
                     <input id="exceSlider" type="range" min="40" max="1000" value="100" step="20">
                     <script>
                         document.getElementById("exceSlider").addEventListener("input", function(e){
                             if(activeAnimationListener.active === 0){
                                 gutterDelay = this.value;
+                                document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000) + "s ";
                             }
                         });
                     </script>
