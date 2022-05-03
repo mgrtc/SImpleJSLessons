@@ -69,9 +69,6 @@ function checkTests(){
       logToPage(failedTests.pop());
     }
   }
-  setTimeout(() => {
-    gutter = undefined;
-  }, 1000);
 }
 
 function init(newTest){
