@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
 .cm-s-myCodeEditorTheme.CodeMirror { background: #2e2e2e; color: #ffffcd; font-family:'Courier New', Courier, monospace; font-size:14px;}
-.cm-s-myCodeEditorTheme .CodeMirror-gutters { background: #2e2e2e; border-right: 0px; }
+.cm-s-myCodeEditorTheme .CodeMirror-gutters {background: #2e2e2e; border-right: 0px;}
 .cm-s-myCodeEditorTheme .CodeMirror-guttermarker { color: white; }
 .cm-s-myCodeEditorTheme .CodeMirror-guttermarker-subtle { color: #d0d0d0; }
 .cm-s-myCodeEditorTheme .CodeMirror-linenumber { color: #566276; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: smaller;}

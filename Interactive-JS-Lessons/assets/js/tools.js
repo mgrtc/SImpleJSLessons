@@ -36,7 +36,7 @@ function injectHelpers(array, start){
     var newArray = new Array();
     var newStack = new Stack();
     let stringtestdata = newTest.returnCurrentQuestion().stringsTests;
-    let stringTests = new Stack(JSON.parse(JSON.stringify(stringtestdata)));
+    let stringTests = new Stack(JSON.parse(JSON.stringify(stringtestdata))) || new Stack();
     
     if(typeof(start) === "undefined"){
         start = 0;

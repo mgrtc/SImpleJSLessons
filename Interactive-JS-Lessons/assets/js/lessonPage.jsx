@@ -14,7 +14,7 @@ function displayTests(newTest){
     let newQuestion = newTest.returnQuestionSet()[i];
     elements.push(function(){
       return (<section id={`test-num-${i}`} className={function(){
-        if(Number(i) < localStorage.getItem(`${currentLabID}`)){
+        if(Number(i) < localStorage.getItem(`${currentLabID}`)-1){
           return "fadeOut";
         }
       }()}>

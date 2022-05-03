@@ -20,19 +20,23 @@ class Test{
     this.testQuestionSet.push(newQuestion);
   }
   nextQuestion(){
-    if(this.currentQuestion >= this.testQuestionSet.length-1){
-      console.log("currentLabId", currentLabID);
-      localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length );
-      return;
-    }
     this.currentQuestion++;
-    if(this.testQuestionSet[this.currentQuestion].startingCode !== ("" || undefined)){
+    if(typeof(this.testQuestionSet[this.currentQuestion]) != "undefined"){
       editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
     }
     localStorage.setItem("textArea", editor.getValue());
     localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
+    if(this.currentQuestion >= this.testQuestionSet.length-1){
+      localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length );
+    }
+    if(this.currentQuestion >= this.testQuestionSet.length){
+      this.currentQuestion = this.testQuestionSet.length-1;
+    }
   }
   returnCurrentQuestion(){
+    if(this.currentQuestion >= this.testQuestionSet.length){
+      this.currentQuestion = this.testQuestionSet.length-1;
+    }
     return this.testQuestionSet[this.currentQuestion];
   }
   returnQuestionSet(){
