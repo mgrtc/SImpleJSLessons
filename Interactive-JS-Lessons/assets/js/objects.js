@@ -21,6 +21,8 @@ class Test{
   }
   nextQuestion(){
     if(this.currentQuestion >= this.testQuestionSet.length-1){
+      console.log("currentLabId", currentLabID);
+      localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length );
       return;
     }
     this.currentQuestion++;
@@ -28,6 +30,7 @@ class Test{
       editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
     }
     localStorage.setItem("textArea", editor.getValue());
+    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
   }
   returnCurrentQuestion(){
     return this.testQuestionSet[this.currentQuestion];

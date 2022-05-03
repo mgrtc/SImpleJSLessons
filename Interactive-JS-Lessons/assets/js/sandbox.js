@@ -62,7 +62,6 @@ function checkTests(){
       alert("Congrats on getting to the end!");
     }
     newTest.nextQuestion();
-    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
   }else{
     logToPage("you failed!");
     while(window.failedTests.size() > 0){
