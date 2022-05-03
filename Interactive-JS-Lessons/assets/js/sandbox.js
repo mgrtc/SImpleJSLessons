@@ -27,7 +27,7 @@ var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch(error){
-      return 374760806408347;
+      return 268945738906855;
   }
   return number;
 };
@@ -71,7 +71,7 @@ function checkTests(){
   }
   setTimeout(() => {
     gutter = undefined;
-  }, 100);
+  }, 1000);
 }
 
 function init(newTest){
