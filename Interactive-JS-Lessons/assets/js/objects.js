@@ -133,7 +133,7 @@ function searchFramesForFunctionDef(functionName, startingFrame){
       return child;
     }
   }
-  return false;
+  return startingFrame.returnDefaultFrame();
 }
 function searchFramesForVariable(variableName, value, type, startingFrame, frameName){
   if(
@@ -200,7 +200,7 @@ class Frame { //SHOULD PROBABLY ABSTRACT
       this.name = newName;
       this.type = type;
       currentFrame = searchFramesForFunctionDef(newName, currentFrame.returnDefaultFrame());
-      currentFrame.childrenFrame.push(this);
+      currentFrame.childrenFrame.unshift(this); //adds to beggining of array so the most recent versions will always be used
       this.previousFrame = currentFrame;
     }
   }
@@ -305,10 +305,7 @@ class Stack {
         do{
           this.newStack[index] = this.newStack[index+1];
           index++;
-          if(index === this.top){
-            this.newStack[index] = null;
-          }
-        }while(index < this.top)
+        }while(index <= this.top)
     }else{
       var newData = this.newStack[this.top];
       this.newStack[this.top] = null;
