@@ -26,8 +26,8 @@ class Test{
     }
     localStorage.setItem("textArea", editor.getValue());
     localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
-    if(this.currentQuestion >= this.testQuestionSet.length-1){
-      localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length );
+    if(this.currentQuestion > this.testQuestionSet.length-1){
+      localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length+1);
     }
     if(this.currentQuestion >= this.testQuestionSet.length){
       this.currentQuestion = this.testQuestionSet.length-1;
