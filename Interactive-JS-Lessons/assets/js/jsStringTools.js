@@ -43,9 +43,22 @@ function hash(str) {
   h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
   return 4294967296 * (2097151 & h2) + (h1>>>0);
 };
+function checkForIllegalKW(string){
+  console.log("check for illegal", string);
+  for(word of RULES){
+    if(new RegExp(`\\b${word}\\b`).test(string)){
+      window.logToPage(`ILLEGAL WORD: ${word}`);
+      return true;
+    }
+  }
+  return false;
+}
 function breakIntoComponents(inputString) {
     inputString = inputString.split("\n");
     inputString = commentsCleanse(inputString);
+    if(checkForIllegalKW(inputString.join("\n"))){
+      return;
+    }
     if(enableLineAnimations === true){
       let newSeed = Math.random() * 17;
       for(let i in inputString){

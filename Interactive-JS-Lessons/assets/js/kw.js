@@ -3,8 +3,9 @@ var RULES = [
     //ILLEGAL DEFAULT FUNCTIONS
     "fetch", "post", 
     //ILLEGAL FUNCTIONS
-    "injectHelpers", 
+    "injectHelpers", "checkTests", "visualizeLineNumbers",
     //ILLEGAL VARIABLES
-    "currentframe", "newTest", "newStack", "newClock", "gutterLineMap", "gutterCounter"
+    "currentframe", "newTest", "newStack", "newClock", "gutterLineMap", "gutterCounter",
+    "editor", "activeAnimationListener", "currentLabID", "enableLineAnimations", "gutterDelay", "gutterCounter"
 
 ];
