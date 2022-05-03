@@ -102,6 +102,7 @@ function init(newTest){
         matchBrackets: true,
         autoCloseBrackets: true,
         extraKeys: {"Ctrl-Q": "toggleComment"},
+        scrollbarStyle: "null"
     });
     displayTests(newTest);
     addRunButtonEventListener(document.getElementById("run"), newTest);
