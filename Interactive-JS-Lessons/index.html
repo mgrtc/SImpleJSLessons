@@ -32,6 +32,7 @@
 </head>
 <style>
 body{
+    overflow: hidden;
     background-color: rgb(61, 61, 61);
 }
 #exceSlider {
@@ -201,12 +202,32 @@ console {
                     <p id="timingLabel" style="display: inline-block;font-size: 10px;"></p>
                     <input id="exceSlider" type="range" min="40" max="1000" value="100" step="20">
                     <script>
+                        document.getElementById("lineAnimationCheckbox").addEventListener("input", function(){
+                            if(this.checked === true){
+                                alert(`disable this feature first if you encounter weird errors.\nIf line numbers don't match up with execution, reload the page. It is an issue with a library used.`);
+                            }
+                        });
                         gutterDelay = document.getElementById("exceSlider").value;
                         document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
                         document.getElementById("exceSlider").addEventListener("input", function(e){
                             if(activeAnimationListener.active === 0){
                                 gutterDelay = this.value;
                                 document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
+                            }
+                        });
+                    </script>
+                </span>
+                <span style="float: right;margin-right: 10px;">
+                    <input id="sandboxModeState" type="checkbox" style="position: relative; top:1px;">
+                    <p style="display: inline-block;font-size: 10px;">SandboxMode</p>
+                    <script>
+                        document.getElementById("sandboxModeState").addEventListener("input", function(){
+                            if(this.checked === true){
+                                alert(`1. Testing in this mode will be deactivated \n2. You will have complete freedom of javascript in the editor*`);
+                            }
+                            switch(this.checked){
+                                case true: $("#lineAnimationCheckbox")[0].disabled = true; break;
+                                case false: $("#lineAnimationCheckbox")[0].disabled = false; break;
                             }
                         });
                     </script>

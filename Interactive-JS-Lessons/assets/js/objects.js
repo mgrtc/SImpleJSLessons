@@ -20,16 +20,23 @@ class Test{
     this.testQuestionSet.push(newQuestion);
   }
   nextQuestion(){
-    if(this.currentQuestion >= this.testQuestionSet.length-1){
-      return;
-    }
     this.currentQuestion++;
-    if(this.testQuestionSet[this.currentQuestion].startingCode !== ("" || undefined)){
+    if(typeof(this.testQuestionSet[this.currentQuestion]) != "undefined"){
       editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
     }
-    localStorage.setItem("textArea", editor.getValue());
+    localStorage.setItem(("textArea" + currentLabID), editor.getValue());
+    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
+    if(this.currentQuestion > this.testQuestionSet.length-1){
+      localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length+1);
+    }
+    if(this.currentQuestion >= this.testQuestionSet.length){
+      this.currentQuestion = this.testQuestionSet.length-1;
+    }
   }
   returnCurrentQuestion(){
+    if(this.currentQuestion >= this.testQuestionSet.length){
+      this.currentQuestion = this.testQuestionSet.length-1;
+    }
     return this.testQuestionSet[this.currentQuestion];
   }
   returnQuestionSet(){
@@ -126,7 +133,7 @@ function searchFramesForFunctionDef(functionName, startingFrame){
       return child;
     }
   }
-  return false;
+  return startingFrame.returnDefaultFrame();
 }
 function searchFramesForVariable(variableName, value, type, startingFrame, frameName){
   if(
@@ -192,10 +199,8 @@ class Frame { //SHOULD PROBABLY ABSTRACT
       frameCounter++;
       this.name = newName;
       this.type = type;
-      currentFrame = searchFramesForFunctionDef(newName, currentFrame.returnDefaultFrame());
-      // console.log("currentframe", currentFrame.declaredFunctions.get(newName));
-      currentFrame = currentFrame.declaredFunctions.get(newName);
-      currentFrame.childrenFrame.push(this);
+      currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);
+      currentFrame.childrenFrame.push(this); //adds to beggining of array so the most recent versions will always be used
       this.previousFrame = currentFrame;
     }
   }
@@ -300,10 +305,7 @@ class Stack {
         do{
           this.newStack[index] = this.newStack[index+1];
           index++;
-          if(index === this.top){
-            this.newStack[index] = null;
-          }
-        }while(index < this.top)
+        }while(index <= this.top)
     }else{
       var newData = this.newStack[this.top];
       this.newStack[this.top] = null;

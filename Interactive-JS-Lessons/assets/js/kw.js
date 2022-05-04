@@ -1,10 +1,10 @@
 var RULES = [
        // ==================ILLEGAL STRINGS===================
     //ILLEGAL DEFAULT FUNCTIONS
-    "fetch", "post", 
+    "fetch", "post", "localStorage", 
     //ILLEGAL FUNCTIONS
-    "injectHelpers", 
+    "injectHelpers", "checkTests", "visualizeLineNumbers",
     //ILLEGAL VARIABLES
-    "currentframe", "newTest", "newStack", "newClock", "gutterLineMap", "gutterCounter"
-
+    "currentframe", "frameStack", "failedTests", "newTest", "newStack", "newClock", "gutterLineMap", "gutterCounter",
+    "editor", "activeAnimationListener", "currentLabID", "enableLineAnimations", "gutterDelay", "gutterCounter", "RULES"
 ];

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Lesson</title>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+</head>
+<style>
+body {
+    padding-bottom: 30px;
+}
+label {
+    margin-top: 15px;
+}
+button {
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(185, 185, 185);
+
+}
+input, textarea {
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0);
+    width: 100%;
+    padding: 4px;
+    margin-top: 7px;
+    background-color: rgb(231, 231, 231);
+}
+</style>
+<script>
+class Stack {
+  top;
+  newStack;
+  constructor(data){ //data should be an array
+    if(data){
+      this.newStack = data;
+      this.top = this.newStack.length-1;
+    }else{
+      this.newStack = [];
+      this.top = -1;
+    }
+  }
+  push(data){
+    this.top++;
+    this.newStack[this.top] = data;
+  }
+  pop(index){
+    if(index === 0 || index){ 
+        do{
+          this.newStack[index] = this.newStack[index+1];
+          index++;
+        }while(index <= this.top)
+    }else{
+      var newData = this.newStack[this.top];
+      this.newStack[this.top] = null;
+    }
+    this.top--;
+
+    if(this.top < -1){ //prevent the marker from going out of bounds/overflow
+      this.top = -1;
+    }
+    return newData;
+  }
+  peek(){
+    return this.newStack[this.top];
+  }
+  size(){
+    return this.top + 1;
+  }
+  getIndexOfandPop(string){
+    if(this.top < 0){
+      return;
+    }
+    let index = function(newStack, top, string){
+      for(let i = 0; i <= top; i++){
+        if(cleanString(newStack[i]) == cleanString(string)){
+          return i;
+        }
+      }
+      return -1;
+    }(this.newStack, this.top, string);
+    if(index === -1){
+      return undefined;
+    }
+   this.pop(index);
+  }
+}
+
+class Test {
+    title;
+    text;
+    currentQuestion;
+    testQuestionSet;
+    constructor(){
+        this.title = "";
+        this.text = "";
+        this.currentQuestion = 0;
+        this.testQuestionSet = new Array();
+    }
+}
+class Question{
+    title;
+    text;
+    example;
+    startingCode;
+    functs;
+    logs;
+    vars;
+    constructor(){
+        this.title = "";
+        this.text = "";
+        this.example = "";
+        this.startingCode = "";
+        this.functs = new Array();
+        this.logs = new Array();
+        this.vars = new Array();
+    }
+}
+var newVariable = {
+    name: "",
+    scopeName: "",
+    type: "",
+
+}
+</script>
+<script>
+var newTest = {
+    title: "",
+    text : "",
+    currentQuestion: 0,
+    testQuestionSet: [
+        {
+            title: "",
+            text: ``,
+            example: ``,
+            startingCode: ``,
+            functs: [],
+            logs: [],
+            vars: []
+        }
+
+    ],
+};
+
+var newVarStack = new Stack();
+var newFunctsStack = new Stack();
+</script>
+<body>
+<nav id ="navBar" class="navbar navbar-dark navbar-expand-md" style="background: rgb(61, 61, 61);color: rgb(224,224,224);padding: 15px;">
+    <div class="container-fluid"><a class="navbar-brand" href="#" style="color: rgba(255,255,255,0.9);font-size: 30px;">JS Lessons</a>
+        <div class="collapse navbar-collapse" id="navcol-1">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link active" href="#" style="color: rgb(97,161,255);">Create a Lesson</a></li>
+                <li class="nav-item"></li>
+                <li class="nav-item"></li>
+            </ul>
+        </div><input class="form-control-sm" type="search" style="margin-left: 0px; margin-top: 1px; border-radius: 10px; border-style: none;width: 200px;" placeholder="Search ie : 305502808432711">
+        <button class="btn btn-primary btn-sm" type="button" style="margin-left: 10px;border-radius: 10px;height: 31px;">Search</button>
+        <button data-bs-target="#navcol-1" data-bs-toggle="collapse" class="navbar-toggler"><span class="visually-hidden">Toggle navigation</span><span class="navbar-dark navbar-toggler-icon"></span></button>
+    </div>
+</nav>
+<br>
+<div class="container">
+    <div class="row">
+
+        <div class="row">
+            <label>Lesson Title</label> <input id="lessonTitle" type="text">
+        </div>
+        <br><br>
+        
+        <div class="col">
+            <label>New Question Title</label> <input id="questionTitle" type="text">
+            <br>
+            <label>Question Body</label> 
+            <br>
+            <textarea id="questionBody" type="text" style="width: 100%;height: 150px;"></textarea>
+            <br>
+            <label>Example</label> 
+            <br>
+            <textarea id="exampleText" type="text" style="width: 100%;height: 150px;"></textarea>
+            <br>
+            <label>Starting Code (This section will determine what the code editor will display for each question)</label> 
+            <br>
+            <textarea id="startingCode" type="text" style="width: 100%;height: 150px;"></textarea>
+            <button>Add Question</button>
+        </div>
+
+        <div class="col">
+
+            <label>Variable Tests</label> 
+            <p>Test for variables in specific functions</p>
+            <div class="row">
+                <div class="col">
+                    <input id="variableScope" placeholder="scope" type="text">
+                </div>
+                <div class="col">
+                    <input id="variableType" placeholder="type" type="text">
+                </div>
+                <div class="col">
+                    <input id="variableName" placeholder="name" type="text">
+                </div>
+                <div class="col">
+                    <input id="variableValue" placeholder="value" type="text">
+                </div>
+                <div class="col-sm-2"> 
+                    <button style="position: relative;;height: 34px;top: 6px;float:right" onclick="addVariable()">Add</button>
+                    <script>
+                        function addVariable(){
+                            // let name = $("#variableName")[0];
+                            let name = function(){
+                                let value = $("#variableName")[0].value;
+                                if(value.match(/(^[a-zA-Z])+([0-9a-zA-Z])/)){
+                                    console.log(true);
+                                }
+                            } 
+                            name();
+                            // let scope = $("#variableScope")[0];
+                            // let type = $("#variableType")[0];
+                            // let value = $("#variableValue")[0];
+                            // console.log(type, name, scope, value);
+                        }
+                    </script>
+                </div>
+            </div>
+            <textarea></textarea>
+
+            <label>Console Tests</label> 
+            <p>Test for console outputs in specific functions</p>
+            <div class="row">
+                <div class="col">
+                    <input placeholder="value" type="text">
+                </div>
+                <div class="col">
+                    <input placeholder="function/default" type="text">
+                </div>
+                <div class="col-sm-2"> 
+                    <button style="position: relative;;height: 34px;top: 6px;float:right">Add</button>
+                </div>
+            </div>
+            <textarea></textarea>
+
+            <label>String Tests</label> 
+            <p>Test for exact string matches</p>
+            <div class="row">
+                <div class="col">
+                    <input placeholder="function/default" type="text">
+                </div>
+                <div class="col-sm-2"> 
+                    <button style="position: relative;;height: 34px;top: 6px;float:right">Add</button>
+                </div>
+            </div>
+            <textarea></textarea>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

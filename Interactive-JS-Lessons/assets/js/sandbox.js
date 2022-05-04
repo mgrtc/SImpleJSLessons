@@ -18,18 +18,7 @@ var activeAnimationListener = {
 }
 activeAnimationListener.registerListener(function (val) {
   if (val === 0) {
-    if(window.failedTests.size() === 0){
-      console.log(JSON.stringify(window.failedTests));
-      $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
-      logToPage("you passed!");
-      newTest.nextQuestion();
-      localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
-    }else{
-      logToPage("you failed!");
-      while(window.failedTests.size() > 0){
-        logToPage(failedTests.pop());
-      }
-    }
+    checkTests();
     gutterDelay = document.getElementById("exceSlider").value;
     document.getElementById("timingLabel").innerText = "Timing : " + (gutterDelay/1000).toLocaleString("en",{useGrouping: false,minimumFractionDigits: 2}) + "s ";
 }  
@@ -38,7 +27,7 @@ var labID = function(){
   try{
       var number = Number((window.location.href).split('?')[1].split('=')[1]);
   }catch(error){
-      return 374760806408347;
+      return 268945738906855;
   }
   return number;
 };
@@ -66,20 +55,19 @@ function fetchData(newLabID){
 }
 
 function checkTests(){
-  if(window.failedTests.size() === 0){
+  if(failedTests.size() === 0){
     $(`#test-num-${newTest.currentQuestion}`).addClass("fadeOut");
     logToPage("you passed!");
+    if(Number(newTest.currentQuestion) == newTest.testQuestionSet.length-1){
+      alert("Congrats on getting to the end!");
+    }
     newTest.nextQuestion();
-    localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
   }else{
     logToPage("you failed!");
     while(window.failedTests.size() > 0){
       logToPage(failedTests.pop());
     }
   }
-  setTimeout(() => {
-    gutter = undefined;
-  }, 100);
 }
 
 function init(newTest){
@@ -89,22 +77,22 @@ function init(newTest){
     tabSize: 2,
     value: function(){
         document.getElementById("codeEditor").addEventListener("keyup", function(){
-            localStorage.setItem("textArea", editor.getValue());
+            localStorage.setItem(("textArea" + currentLabID), editor.getValue());
         });
         if(localStorage.getItem(`${currentLabID}`)){
           newTest.currentQuestion = localStorage.getItem(`${currentLabID}`);
         }else{
           localStorage.setItem(`${currentLabID}`, 0);
         }
-        if(localStorage.getItem("textArea") && localStorage.getItem("textArea") !== "//your code here"){
-            return localStorage.getItem("textArea");
+        if(localStorage.getItem(("textArea" + currentLabID)) && localStorage.getItem(("textArea" + currentLabID)) !== "//your code here"){
+            return localStorage.getItem(("textArea" + currentLabID));
         }else{
             try{
-              localStorage.setItem("textArea", newTest.returnCurrentQuestion().startingCode);
+              localStorage.setItem(("textArea" + currentLabID), newTest.returnCurrentQuestion().startingCode);
             }catch{
-              localStorage.setItem("textArea", "//your code here");
+              localStorage.setItem(("textArea" + currentLabID), "//your code here");
             }
-            return localStorage.getItem("textArea");
+            return localStorage.getItem(("textArea" + currentLabID));
         }
     }(),
         theme: "myCodeEditorTheme",
@@ -114,6 +102,7 @@ function init(newTest){
         matchBrackets: true,
         autoCloseBrackets: true,
         extraKeys: {"Ctrl-Q": "toggleComment"},
+        scrollbarStyle: "null"
     });
     displayTests(newTest);
     addRunButtonEventListener(document.getElementById("run"), newTest);
@@ -126,12 +115,13 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
-  localStorage.setItem("textArea", editor.getValue());
-  editor.getDoc().setValue(localStorage.getItem("textArea"));  
+  localStorage.setItem(("textArea" + currentLabID), editor.getValue());
+  editor.getDoc().setValue(localStorage.getItem(("textArea" + currentLabID)));  
   enableLineAnimations = function(){
     return document.getElementById("lineAnimationCheckbox").checked;
   }();
   gutterDelay = document.getElementById("exceSlider").value;
+  sandboxMode = document.getElementById("sandboxModeState").checked;
   editor.value = editor.doc.getValue();
   gutter = undefined;
   gutter = document.getElementsByClassName("CodeMirror-linenumber");
@@ -187,7 +177,7 @@ function runCurrentTest(newTest){
 
   //Very important, because eval treats the frame it was called in as its code's global frame from here we can access the user's global variables and functions
   //So any testing we'd want to do on a user's functions and variables will happen here
-  if(enableLineAnimations === false){
+  if(enableLineAnimations === false && !sandboxMode){
     checkTests();
   }
   //********************************

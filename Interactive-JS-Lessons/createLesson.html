@@ -306,9 +306,10 @@ var newTest = {
             text: `To declare a variable in javascript, you need to use the keyword <i>var</i>, <i>let</i> or <i>const</i>. We will discuss the differences of these keywords later on.
 After the keyword, you can pick out a variable name. `,
             example: `var x = 10
-var = keyword
-x = variable name
-10 = value`,
+//"var" : is the keyword used to declare a variable type. In javascript, you could also use the keyword "let" and "const"
+//"x" : is the name we want to set this variable to
+//10 : is the value we initially set for variable x.
+//notes: We could also declare a variable without setting it to anything. It will just default to undefined`,
             startingCode: `//lets go ahead and try that ourselves. lets declare a variable with a keyword of var and a name of "myFirstVariableName", without the quotations.
 //then set it equals to the value of "Hello World"
 //please inclure the quotations with the value as shown above.
@@ -339,7 +340,8 @@ var myFirstVariableName = "Hello World"`,
             text : `Much like variables, functions are one of the main building blocks for any programs, but the keyword you need to use to create a function is "function" A function is basically a module inside a piece of code that does one task, and it only does it when its called to do so. 
 
 We want to use functions in our programming because it reduces repetition. If there's something you want to do in your program more than once, you could suppositly keep writing out the code to do that thing multiple times, or you could simply turn it into a function and call it using it's name each time you want to do that thing.`,
-            example : `function exampleFunctionName(){ 
+            example : `//here is a function that simply create a variable x, sets it to hello world, then prints x to the console.
+function exampleFunctionName(){ 
     var x = "Hello World";
     console.log(x);               
 }
@@ -350,6 +352,43 @@ exampleFunctionName();`,
 //then call the function`,
             vars: [{name : "x", val : "Hello World", type: "var", scopeName : "myFirstFunction"}],
             stringTests : ["function myFirstFunction()", "myFirstFunction()"]
+        },
+        {
+            title: "Function Returns",
+            text: "Functions could return values. This is useful because often times, you might want to know the results. For example, if you had a function that adds two numbers, it would be helpful to be able to pass the sum back.",
+            example: `//declaring a new function named "addTwoNums"
+function addTwoNums(){
+var num1 = 10;
+var num2 = 15;
+var sum = num1 + num2;
+//you can use the keyword return to return a value. Additionally, what you could also do here is 
+//instead of doing "return sum", you could do return (num1 + num2)
+return sum;                
+}
+
+//the return of the function addTwoNums gets assigned to var sum here.
+var sum = addTwoNums();
+//expected output: 15
+console.log(sum); 
+`,
+            startingCode: `//Modify the code below to catch the return for function MultiplyTwoNumbers into variable "product"
+function MultiplyTwoNumbers(){
+    var num1 = 5;
+    console.log("num1 is : ", num1);
+    var num2 = 6;
+    console.log("num2 is : ", num2);
+    var product = num1 * num2;  //this operation should result in 30
+    //write a line here to return the variable "product" above
+}
+
+//assign product to the function "MultiplyTwoNumbers"
+var product;
+//expect to see 30 printed out
+console.log(product);
+`,
+        vars : [{name: "product", scopeName: "default", val: 30, type: "var"}],
+        stringTests: ['return product', 'var product = MultiplyTwoNumbers()'],
+        logs: [{val: "30", scopeName: "default"}],
         }
 
       ],
