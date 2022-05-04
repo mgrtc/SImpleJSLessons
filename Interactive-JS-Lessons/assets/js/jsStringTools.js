@@ -44,7 +44,6 @@ function hash(str) {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 function checkForIllegalKW(string) {
-  console.log("check for illegal", string);
   for (word of RULES) {
     if (new RegExp(`\\b${word}\\b`).test(string)) {
       window.logToPage(`ILLEGAL WORD: ${word}`);
@@ -59,13 +58,11 @@ function breakIntoComponents(inputString) {
       if (checkForIllegalKW(inputString.join("\n"))) {
         return;
       }
-      if (enableLineAnimations === true) {
-        let newSeed = Math.random() * 17;
-        for (let i in inputString) {
-          let newHash = hash(i + newSeed + "");
-          inputString[i] = cleanString(inputString[i]) + "//lineNumber=" + newHash;
-          lineNumberMap.set(newHash, i);
-        }
+      let newSeed = Math.random() * 17;
+      for (let i in inputString) {
+        let newHash = hash(i + newSeed + "");
+        inputString[i] = cleanString(inputString[i]) + "//lineNumber=" + newHash;
+        lineNumberMap.set(newHash, i);
       }
       inputString = trimStringInArray(inputString);
       inputString = removeEmptyIndices(inputString);
