@@ -24,7 +24,7 @@ class Test{
     if(typeof(this.testQuestionSet[this.currentQuestion]) != "undefined"){
       editor.getDoc().setValue(this.testQuestionSet[this.currentQuestion].startingCode);  
     }
-    localStorage.setItem("textArea", editor.getValue());
+    localStorage.setItem(("textArea" + currentLabID), editor.getValue());
     localStorage.setItem(`${currentLabID}`, newTest.currentQuestion);
     if(this.currentQuestion > this.testQuestionSet.length-1){
       localStorage.setItem(`${currentLabID}`, this.testQuestionSet.length+1);
@@ -199,8 +199,8 @@ class Frame { //SHOULD PROBABLY ABSTRACT
       frameCounter++;
       this.name = newName;
       this.type = type;
-      currentFrame = searchFramesForFunctionDef(newName, currentFrame.returnDefaultFrame());
-      currentFrame.childrenFrame.unshift(this); //adds to beggining of array so the most recent versions will always be used
+      currentFrame = returnFrameContainingFunctionDEF(currentFrame, newName);
+      currentFrame.childrenFrame.push(this); //adds to beggining of array so the most recent versions will always be used
       this.previousFrame = currentFrame;
     }
   }

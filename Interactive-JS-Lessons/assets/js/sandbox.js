@@ -77,22 +77,22 @@ function init(newTest){
     tabSize: 2,
     value: function(){
         document.getElementById("codeEditor").addEventListener("keyup", function(){
-            localStorage.setItem("textArea", editor.getValue());
+            localStorage.setItem(("textArea" + currentLabID), editor.getValue());
         });
         if(localStorage.getItem(`${currentLabID}`)){
           newTest.currentQuestion = localStorage.getItem(`${currentLabID}`);
         }else{
           localStorage.setItem(`${currentLabID}`, 0);
         }
-        if(localStorage.getItem("textArea") && localStorage.getItem("textArea") !== "//your code here"){
-            return localStorage.getItem("textArea");
+        if(localStorage.getItem(("textArea" + currentLabID)) && localStorage.getItem(("textArea" + currentLabID)) !== "//your code here"){
+            return localStorage.getItem(("textArea" + currentLabID));
         }else{
             try{
-              localStorage.setItem("textArea", newTest.returnCurrentQuestion().startingCode);
+              localStorage.setItem(("textArea" + currentLabID), newTest.returnCurrentQuestion().startingCode);
             }catch{
-              localStorage.setItem("textArea", "//your code here");
+              localStorage.setItem(("textArea" + currentLabID), "//your code here");
             }
-            return localStorage.getItem("textArea");
+            return localStorage.getItem(("textArea" + currentLabID));
         }
     }(),
         theme: "myCodeEditorTheme",
@@ -115,12 +115,13 @@ function addRunButtonEventListener(element, newTest){
 }
 
 function runCurrentTest(newTest){
-  localStorage.setItem("textArea", editor.getValue());
-  editor.getDoc().setValue(localStorage.getItem("textArea"));  
+  localStorage.setItem(("textArea" + currentLabID), editor.getValue());
+  editor.getDoc().setValue(localStorage.getItem(("textArea" + currentLabID)));  
   enableLineAnimations = function(){
     return document.getElementById("lineAnimationCheckbox").checked;
   }();
   gutterDelay = document.getElementById("exceSlider").value;
+  sandboxMode = document.getElementById("sandboxModeState").checked;
   editor.value = editor.doc.getValue();
   gutter = undefined;
   gutter = document.getElementsByClassName("CodeMirror-linenumber");
@@ -134,7 +135,7 @@ function runCurrentTest(newTest){
   //******************
   //hijack console.log
   //******************
-  if(activeAnimationListener.active > 0){
+  if((typeof(newTest.returnCurrentQuestion()) === "undefined" || activeAnimationListener.active > 0)){
     return;
   }
 
@@ -176,7 +177,7 @@ function runCurrentTest(newTest){
 
   //Very important, because eval treats the frame it was called in as its code's global frame from here we can access the user's global variables and functions
   //So any testing we'd want to do on a user's functions and variables will happen here
-  if(enableLineAnimations === false){
+  if(enableLineAnimations === false && !sandboxMode){
     checkTests();
   }
   //********************************

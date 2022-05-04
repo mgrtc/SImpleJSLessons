@@ -217,6 +217,21 @@ console {
                         });
                     </script>
                 </span>
+                <span style="float: right;margin-right: 10px;">
+                    <input id="sandboxModeState" type="checkbox" style="position: relative; top:1px;">
+                    <p style="display: inline-block;font-size: 10px;">SandboxMode</p>
+                    <script>
+                        document.getElementById("sandboxModeState").addEventListener("input", function(){
+                            if(this.checked === true){
+                                alert(`1. Testing in this mode will be deactivated \n2. You will have complete freedom of javascript in the editor*`);
+                            }
+                            switch(this.checked){
+                                case true: $("#lineAnimationCheckbox")[0].disabled = true; break;
+                                case false: $("#lineAnimationCheckbox")[0].disabled = false; break;
+                            }
+                        });
+                    </script>
+                </span>
             </div>
             <div id="ConsoleContainer">
                 <!-- <console class="tick">> hello world</console>
