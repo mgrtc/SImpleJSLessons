@@ -1,7 +1,7 @@
 var RULES = [
        // ==================ILLEGAL STRINGS===================
     //ILLEGAL DEFAULT FUNCTIONS
-    "fetch", "post", "localHost", 
+    "fetch", "post", "localStorage", 
     //ILLEGAL FUNCTIONS
     "injectHelpers", "checkTests", "visualizeLineNumbers",
     //ILLEGAL VARIABLES
